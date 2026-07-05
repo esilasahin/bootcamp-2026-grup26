@@ -20,7 +20,7 @@ Grup26
 
 UniMate AI, üniversite öğrencilerinin akademik ve kariyer gelişim süreçlerini tek platformda yönetmelerini sağlayan çok ajanlı (Multi-Agent) yapay zekâ destekli kişisel asistandır.
 
-Sistem; öğrencinin yüklediği ders notları, PDF dokümanları, CV'si ve kariyer hedeflerini analiz ederek öğrencinin akademik gelişimini destekler. Ders materyallerini özetler, quiz oluşturur, çalışma planı hazırlar, CV analizi yapar ve kariyer gelişimine yönelik kişiselleştirilmiş öneriler sunar.
+Sistem; öğrencinin yüklediği ders notları, PDF dokümanları, CV'si ve kariyer hedeflerini analiz ederek öğrencinin akademik ve kariyer gelişimini destekler. Ders materyallerini özetler, quiz oluşturur, çalışma planı hazırlar, CV analizi yapar ve kariyer gelişimine yönelik kişiselleştirilmiş öneriler sunar.
 
 UniMate AI, yalnızca soru-cevap yapan bir sohbet botu değil; öğrencinin gelişimini takip eden ve ona özel öneriler sunan akıllı bir akademik ve kariyer koçudur.
 
@@ -28,13 +28,14 @@ UniMate AI, yalnızca soru-cevap yapan bir sohbet botu değil; öğrencinin geli
 
 - PDF ve ders notlarını analiz etme
 - OCR ile görsellerden metin çıkarma
-- Otomatik ders özeti oluşturma
-- Quiz ve flashcard üretme
+- Ders özeti oluşturma
+- Quiz oluşturma
+- Flashcard oluşturma
 - Kişiselleştirilmiş çalışma planı hazırlama
 - CV analizi yapma
-- İş ilanı ile CV uyumluluğunu değerlendirme
+- İş ilanı ile CV eşleştirmesi
 - Eksik becerileri analiz ederek kariyer önerileri sunma
-- Haftalık hedef ve gelişim önerileri oluşturma
+- Haftalık gelişim önerileri oluşturma
 
 ## Hedef Kitle
 
@@ -46,7 +47,7 @@ UniMate AI, yalnızca soru-cevap yapan bir sohbet botu değil; öğrencinin geli
 
 ## Product Backlog URL
 
-**Miro Board:** [(Miro bağlantısı buraya eklenecek.)](https://miro.com/app/board/uXjVH-xMq9c=/?share_link_id=989063034731)
+**Miro Board:** [(Miro bağlantısı)](https://miro.com/app/board/uXjVH-xMq9c=/?share_link_id=989063034731)
 
 ---
 
@@ -100,7 +101,7 @@ Sprint Board ekran görüntüsü aşağıda paylaşılmıştır.
 
 **Sprint Board Screenshot**
 
-*(Buraya Miro ekran görüntüsünü ekleyin.)* <img width="1242" height="867" alt="image" src="https://github.com/user-attachments/assets/a4bbe7f9-24d8-4810-932d-e3065be096c7" />
+*(Miro ekran görüntüsü)* <img width="1242" height="867" alt="image" src="https://github.com/user-attachments/assets/a4bbe7f9-24d8-4810-932d-e3065be096c7" />
 
 ---
 
@@ -139,3 +140,9 @@ Sprint hedeflerine başarıyla ulaşılmış ve ikinci sprintte geliştirme sür
 - Career Agent geliştirilmesi
 - Veritabanı altyapısının oluşturulması
 - Backend API geliştirilmesi
+
+# Proje Durumu
+
+🟢 Sprint 1 Tamamlandı
+
+🔄 Sprint 2 Devam Ediyor
