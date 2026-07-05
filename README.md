@@ -89,7 +89,11 @@ Toplam: **24 Story Point**
 
 ## Daily Scrum
 
-Takım üyelerinin farklı çalışma saatlerine sahip olması nedeniyle Daily Scrum toplantılarının WhatsApp üzerinden yapılmasına karar verilmiştir.
+Takım üyelerinin Daily Scrum toplantıları ortak günlerde WhatsApp üzerinden paylaşılan google meet ile yapılmaktadır.
+<img width="1080" height="1931" alt="WhatsApp Image 2026-07-05 at 20 35 34" src="https://github.com/user-attachments/assets/4a5a023f-674a-4383-afaa-0dece00786a7" />
+<img width="1080" height="763" alt="WhatsApp Image 2026-07-05 at 20 36 09" src="https://github.com/user-attachments/assets/26600b14-7784-478b-9a22-f011b2ee76b3" />
+
+
 
 ---
 
@@ -119,6 +123,9 @@ Sprint sonunda yapılan değerlendirme sonucunda;
 - GitHub repository oluşturulmuştur.
 
 Sprint hedeflerine başarıyla ulaşılmış ve ikinci sprintte geliştirme sürecine başlanmasına karar verilmiştir.
+
+<img width="1372" height="628" alt="image" src="https://github.com/user-attachments/assets/cf83c4a9-00a9-4fb5-b82d-1c271b94854d" />
+
 
 ---
 
