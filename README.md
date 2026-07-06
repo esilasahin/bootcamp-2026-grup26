@@ -109,6 +109,11 @@ Sprint Board ekran görüntüsü aşağıda paylaşılmıştır.
 
 ---
 
+## Ürün Durumu: 
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/2a191d4d-2228-4e5d-9edd-6f48cb724a44" />
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/1186b514-822c-4698-a7e7-dd7e9ae869cd" />
+
 ## Sprint Review
 
 Sprint sonunda yapılan değerlendirme sonucunda;
