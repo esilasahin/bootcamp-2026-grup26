@@ -1,6 +1,6 @@
 # Takım İsmi
 
-Grup26
+MindForce - Grup26
 
 # Ürün ile İlgili Bilgiler
 
