@@ -235,13 +235,11 @@ Sprint kapsamında toplam yedi görev ve 24 Story Point planlanmıştır.
 
 ### Sprint Board Bağlantısı
 <img width="1478" height="943" alt="image" src="https://github.com/user-attachments/assets/7c7fbe85-601a-42a4-856e-deaffcf9f26b" />
-- [Jira Sprint 2 Board](https://stu-team-s6pfouz9.atlassian.net/jira/software/projects/YBG2/boards/1/backlog)
-Jira panosunda görevler aşağıdaki durumlara göre takip edilmektedir:
+- [[Jira Sprint 2 Board](https://stu-team-s6pfouz9.atlassian.net/jira/software/projects/YBG2/boards/1/backlog?atlOrigin=eyJpIjoiYTAxYmQ2ODFmMjc0NGZhZGFlODJmMmU3ZGVjM2Q0NWMiLCJwIjoiaiJ9)]
+ Jira panosunda görevler aşağıdaki durumlara göre takip edilmiştir:
 - Yapılacaklar
 - Devam Ediyor
 - Tamamlandı
-
-Sprint görevlerinin güncel durumları ilgili takım üyeleri tarafından Jira üzerinden güncellenecektir.
 
 ## Ürün Durumu
 
