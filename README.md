@@ -158,3 +158,337 @@ Sprint hedeflerine başarıyla ulaşılmış ve ikinci sprintte geliştirme sür
 🟢 Sprint 1 Tamamlandı
 
 🔄 Sprint 2 Devam Ediyor
+
+------------
+
+# Sprint 2
+
+## Sprint Notları
+
+Sprint 2 kapsamında UniMate AI projesinde planlama aşamasından yazılım geliştirme aşamasına geçilmiştir.
+
+Bu sprintte çalışan ve bütünlüklü bir MVP oluşturmak amacıyla temel kullanıcı akışına öncelik verilmiştir. Kullanıcıların kayıt olması, giriş yapması, Dashboard ekranına erişmesi, PDF veya görsel yüklemesi, belgeden metin çıkarılması ve Study Agent tarafından özet üretilmesi Sprint 2'nin temel hedefleri olarak belirlenmiştir.
+
+Sprint kapsamında aşağıdaki geliştirme paketleri oluşturulmuştur:
+
+- Frontend temel yapı ve Authentication
+- Dashboard ve belge arayüzleri
+- Backend Authentication ve PostgreSQL veritabanı
+- Dosya işleme ve OCR
+- Study Agent ve özet servisi
+
+Takım içi görev dağılımı aşağıdaki şekilde gerçekleştirilmiştir:
+
+- **Esila Şahin:** Frontend temel yapı, Login, Register, form doğrulama, routing, Protected Route, logout ve temel Dashboard
+- **Şifanur Karakılçık:** Dashboard belge arayüzleri, PDF/görsel yükleme alanı, loading, hata mesajları ve özet sonuç ekranı
+- **Nurcan Altuğ:** FastAPI Backend Authentication sistemi ve PostgreSQL veritabanı altyapısı
+- **Yüksel Karan:** Dosya yükleme, PDF metin çıkarma ve görsel OCR işlemleri
+- **Hüseyin Tutak:** Study Agent, LLM bağlantısı ve özet üretim servisi
+
+Sprint görevleri takım içi görüşmeler sonucunda belirlenmiş, görevlerin planlanması ve durum takibi Jira Sprint Board üzerinden gerçekleştirilmiştir.
+
+Career Agent, Coach Agent, Quiz, Flashcard ve gelişmiş Dashboard özelliklerinin temel MVP akışı tamamlandıktan sonra Sprint 3 kapsamında ele alınmasına karar verilmiştir.
+
+## Sprint İçinde Tamamlanması Tahmin Edilen Puan
+
+**24 Story Point**
+
+## Puan Tamamlama Mantığı
+
+Sprint 2 kapsamında Jira üzerinde toplam yedi görev oluşturulmuş ve görevler toplam **24 Story Point** olarak planlanmıştır.
+
+Planlanan görevler aşağıdaki gibidir:
+
+| Görev | Sorumlu | Story Point | Durum |
+|---|---|---:|---|
+| Frontend Authentication ve Routing | Esila Şahin | 5 SP | Tamamlandı |
+| Protected Route, Logout ve Temel Dashboard | Esila Şahin | 3 SP | Tamamlandı |
+| FastAPI Backend ve Authentication API | Nurcan Altuğ | 4 SP | Takım üyesi tarafından güncellenecek |
+| PostgreSQL Veritabanı Altyapısı | Nurcan Altuğ | 3 SP | Takım üyesi tarafından güncellenecek |
+| PDF Yükleme ve Metin Çıkarma | Yüksel Karan | 4 SP | Takım üyesi tarafından güncellenecek |
+| Study Agent ile Özet Üretimi | Hüseyin Tutak | 3 SP | Takım üyesi tarafından güncellenecek |
+| Frontend Dosya Yükleme ve Özet Sonucu Bağlantısı | Şifanur Karakılçık | 2 SP | Takım üyesi tarafından güncellenecek |
+
+**Toplam planlanan: 24 Story Point**
+
+Şu anda kesin olarak tamamlanan görevler:
+
+- Frontend Authentication ve Routing — **5 SP**
+- Protected Route, Logout ve Temel Dashboard — **3 SP**
+
+**Kesin olarak tamamlanan: 8 Story Point**
+
+Diğer görevlerin tamamlanma durumları ilgili takım üyeleri tarafından Jira panosunda ve README içerisindeki kendi bölümlerinde güncellenecektir.
+
+## Daily Scrum
+Takım iletişimi ve görev paylaşımı WhatsApp üzerinden düzenli olarak sürdürülmüştür.
+<img width="496" height="82" alt="image" src="https://github.com/user-attachments/assets/ae25ad04-11b5-4e1b-8b5f-eb2fa4b23548" />
+<img width="496" height="162" alt="image" src="https://github.com/user-attachments/assets/733b32e8-ec34-4652-b353-0fd76016559d" />
+<img width="403" height="88" alt="image" src="https://github.com/user-attachments/assets/e6cbcdbe-a084-4d5b-9dcc-e3218e00a612" />
+
+
+## Sprint Board Update
+
+Sprint 2 görevleri Jira üzerinde oluşturulmuş ve takım üyelerinin teknik sorumluluklarına göre dağıtılmıştır.
+
+Sprint kapsamında toplam yedi görev ve 24 Story Point planlanmıştır.
+
+### Sprint Board Bağlantısı
+
+- [Jira Sprint 2 Board](https://stu-team-s6pfouz9.atlassian.net/jira/software/projects/YBG2/boards/1/backlog)
+Jira panosunda görevler aşağıdaki durumlara göre takip edilmektedir:
+- Yapılacaklar
+- Devam Ediyor
+- Tamamlandı
+
+Sprint görevlerinin güncel durumları ilgili takım üyeleri tarafından Jira üzerinden güncellenecektir.
+
+## Ürün Durumu
+
+Sprint 2 kapsamında UniMate AI uygulamasının çalışan temel kullanıcı akışının oluşturulmasına başlanmıştır.
+
+<img width="1582" height="841" alt="image" src="https://github.com/user-attachments/assets/e384a441-1abe-4acc-b2e1-da233654c65f" />
+<img width="1552" height="835" alt="image" src="https://github.com/user-attachments/assets/9aa19cd2-e275-4504-8154-948dd3efba17" />
+
+
+---
+
+### Frontend Authentication ve Dashboard — Esila Şahin
+
+Frontend Authentication ve temel Dashboard tarafında aşağıdaki çalışmalar tamamlanmıştır:
+
+- React ve Vite frontend projesi hazırlanmıştır.
+- React Router kurulmuştur.
+- Login ekranı geliştirilmiştir.
+- Register ekranı geliştirilmiştir.
+- Login ve Register ekranlarında ortak mor/lila tasarım dili uygulanmıştır.
+- Boş alan doğrulaması eklenmiştir.
+- E-posta format kontrolü eklenmiştir.
+- Şifre uzunluğu kontrolü eklenmiştir.
+- Şifre eşleşme kontrolü eklenmiştir.
+- Kullanıcıya anlaşılır hata mesajları gösterilmiştir.
+- Geçici kayıt işlemi `localStorage` kullanılarak hazırlanmıştır.
+- Geçici giriş işlemi `temporary-demo-token` kullanılarak hazırlanmıştır.
+- Başarılı giriş sonrasında Dashboard yönlendirmesi eklenmiştir.
+- Protected Route component'i geliştirilmiştir.
+- Giriş yapmamış kullanıcıların Dashboard sayfasına erişimi engellenmiştir.
+- Logout işlemi geliştirilmiştir.
+- Logout sırasında token'ın silinmesi sağlanmıştır.
+- Logout sonrasında Login sayfasına yönlendirme eklenmiştir.
+- Temel Dashboard arayüzü hazırlanmıştır.
+- Dashboard içerisine sidebar ve navigasyon alanı eklenmiştir.
+- Dashboard responsive olacak şekilde düzenlenmiştir.
+- ESLint kontrolü başarıyla tamamlanmıştır.
+- Production build testi başarıyla tamamlanmıştır.
+- Geliştirmeler `feature/frontend-auth` branch'i üzerinden GitHub'a gönderilmiştir.
+
+#### Tamamlanan Kullanıcı Akışı
+
+1. Kullanıcı Register ekranından kayıt olabilir.
+2. Kayıt bilgileri geçici olarak `localStorage` içine kaydedilir.
+3. Kullanıcı Login ekranından giriş yapabilir.
+4. Başarılı giriş sonrasında geçici token oluşturulur.
+5. Kullanıcı Dashboard sayfasına yönlendirilir.
+6. Token bulunmayan kullanıcı Dashboard sayfasına erişemez.
+7. Kullanıcı Logout butonuyla çıkış yapabilir.
+8. Logout sonrasında token silinir ve Login sayfasına yönlendirilir.
+
+---
+
+### Frontend Belge Arayüzleri — Şifanur Karakılçık
+
+Bu bölüm Şifanur Karakılçık tarafından güncellenecektir.
+
+Bu görev kapsamında planlanan çalışmalar:
+
+- PDF ve görsel yükleme alanı
+- Dosya seçme arayüzü
+- Dosya yükleme durumu
+- Loading göstergesi
+- Hata mesajları
+- Özet sonuç ekranı
+- Backend dosya yükleme servisiyle bağlantı
+- Study Agent sonucunun kullanıcıya gösterilmesi
+- Mevcut Dashboard tasarımıyla uyumlu arayüz
+
+#### Çalışma Durumu
+
+İlgili takım üyesi tarafından güncellenecektir.
+
+---
+
+### Backend Authentication ve PostgreSQL — Nurcan Altuğ
+
+Bu bölüm Nurcan Altuğ tarafından güncellenecektir.
+
+Bu görev kapsamında planlanan çalışmalar:
+
+- FastAPI backend projesinin hazırlanması
+- PostgreSQL veritabanı bağlantısı
+- Veritabanı modellerinin oluşturulması
+- User tablosunun oluşturulması
+- Document tablosunun oluşturulması
+- Analysis Result tablosunun oluşturulması
+- Veritabanı migration işlemleri
+- Register endpointinin hazırlanması
+- Login endpointinin hazırlanması
+- Kullanıcı şifrelerinin güvenli şekilde hashlenmesi
+- JWT access token oluşturulması
+- Authentication hata mesajlarının hazırlanması
+- Frontend bağlantısına uygun API çıktılarının oluşturulması
+
+#### Çalışma Durumu
+
+İlgili takım üyesi tarafından güncellenecektir.
+
+---
+
+### Dosya İşleme ve OCR — Yüksel Karan
+
+Bu bölüm Yüksel Karan tarafından güncellenecektir.
+
+Bu görev kapsamında planlanan çalışmalar:
+
+- Dosya yükleme endpointinin hazırlanması
+- PDF dosyalarının kabul edilmesi
+- Görsel dosyalarının kabul edilmesi
+- Dosya türü kontrolü
+- Dosya boyutu kontrolü
+- PDF içerisinden metin çıkarılması
+- Görsellerden OCR ile metin çıkarılması
+- Çıkarılan metnin temizlenmesi
+- Türkçe karakterlerin korunması
+- Başarısız OCR durumlarının yönetilmesi
+- Çıkarılan metnin Study Agent servisine uygun hâle getirilmesi
+
+#### Çalışma Durumu
+
+İlgili takım üyesi tarafından güncellenecektir.
+
+---
+
+### Study Agent ve Özet Servisi — Hüseyin Tutak
+
+Bu bölüm Hüseyin Tutak tarafından güncellenecektir.
+
+Bu görev kapsamında planlanan çalışmalar:
+
+- LLM servisi bağlantısı
+- Study Agent sistem promptunun hazırlanması
+- Uzun metinlerin parçalara ayrılması
+- Ders materyallerinin analiz edilmesi
+- Belge özetinin oluşturulması
+- Önemli noktaların çıkarılması
+- JSON formatında çıktı üretilmesi
+- Summary endpointinin hazırlanması
+- Başarısız LLM isteklerinin yönetilmesi
+- Üretilen sonuçların veritabanına kaydedilmesi
+- Özet sonucunun frontend'e gönderilmesi
+
+#### Çalışma Durumu
+
+İlgili takım üyesi tarafından güncellenecektir.
+
+## Sprint Review
+
+Sprint 2 kapsamında planlama aşamasından aktif yazılım geliştirme aşamasına geçilmiştir.
+
+Sprint sürecinde kesin olarak tamamlanan çalışmalar:
+
+- React ve Vite frontend altyapısı hazırlanmıştır.
+- React Router yönlendirmeleri kurulmuştur.
+- Login ekranı geliştirilmiştir.
+- Register ekranı geliştirilmiştir.
+- Form doğrulamaları eklenmiştir.
+- Geçici kayıt ve giriş akışı hazırlanmıştır.
+- Protected Route sistemi geliştirilmiştir.
+- Giriş yapmamış kullanıcıların Dashboard erişimi engellenmiştir.
+- Logout işlemi geliştirilmiştir.
+- Temel ve responsive Dashboard arayüzü hazırlanmıştır.
+- Frontend lint ve production build testleri başarıyla tamamlanmıştır.
+- Sprint görevleri Jira üzerinde oluşturulmuştur.
+- Görevler takım üyelerinin sorumluluklarına göre dağıtılmıştır.
+- Sprint 2 toplam 24 Story Point olarak planlanmıştır.
+
+Backend, veritabanı, OCR, Study Agent ve belge yükleme arayüzü çalışmalarının güncel durumu ilgili takım üyeleri tarafından kendi bölümlerine eklenecektir.
+
+Sprint sonunda tamamlanamayan geliştirmelerin Sprint 3 başlangıcında öncelikli olarak tamamlanmasına karar verilmiştir.
+
+## Sprint Retrospective
+
+### İyi Gidenler
+
+- Takım üyelerinin ana teknik sorumlulukları net şekilde ayrılmıştır.
+- Her takım üyesinin somut bir geliştirme paketi üzerinde çalışması sağlanmıştır.
+- Görevler Story Point değerleriyle birlikte Jira üzerine aktarılmıştır.
+- Frontend geliştirmeleri feature branch üzerinde yürütülmüştür.
+- Main branch üzerinde doğrudan geliştirme yapılmamıştır.
+- Kodlar test edilmeden commit edilmemiştir.
+- Login, Register, Protected Route ve Logout akışı başarıyla tamamlanmıştır.
+- Temel Dashboard mevcut tasarım diliyle uyumlu şekilde geliştirilmiştir.
+- MVP için temel kullanıcı akışına öncelik verilmiştir.
+- Gelişmiş özelliklerin temel sistem tamamlandıktan sonra geliştirilmesine karar verilmiştir.
+
+### Geliştirilmesi Gerekenler
+
+- Jira panosu sprint başlangıcından itibaren düzenli olarak güncellenmelidir.
+- Takım üyeleri görev durumlarını daha sık paylaşmalıdır.
+- Frontend ve backend arasında kullanılacak endpoint yapıları daha erken belirlenmelidir.
+- API request ve response formatları sprint başlangıcında ortaklaştırılmalıdır.
+- Görevlerin tamamlanma kriterleri daha ayrıntılı yazılmalıdır.
+- Takım üyeleri tamamladıkları geliştirmeleri düzenli olarak GitHub'a göndermelidir.
+- Entegrasyon ve hata testleri için sprint sonunda daha fazla zaman ayrılmalıdır.
+- README içerisindeki teknik bölümler her takım üyesi tarafından düzenli güncellenmelidir.
+- MVP dışı özelliklere geçmeden önce temel ürün akışı tamamlanmalıdır.
+
+### Alınan Kararlar
+
+- Her takım üyesi README içerisindeki kendi görev bölümünü güncelleyecektir.
+- Her takım üyesi kendi branch, commit veya Pull Request bağlantılarını README'ye ekleyecektir.
+- Jira görevlerinin durumları ilgili sorumlular tarafından güncellenecektir.
+- Sprint 3 başlangıcında öncelikle Sprint 2'den (varsa)kalan görevler tamamlanacaktır.
+- Frontend ve backend authentication yapıları gerçek JWT sistemiyle bağlanacaktır.
+- PDF yükleme, OCR, Study Agent ve özet gösterme akışı uçtan uca test edilecektir.
+- Temel MVP akışı tamamlanmadan yeni ve ikincil özelliklere geçilmeyecektir.
+- Her geliştirme lint, build ve kullanım testlerinden sonra commit edilecektir.
+- Career Agent, Coach Agent, Quiz ve Flashcard temel sistem tamamlandıktan sonra ele alınacaktır.
+- Sprint sonunda README, Jira ve GitHub durumları birlikte kontrol edilecektir.
+
+## Sprint 3 Hedefleri
+
+Sprint 3 kapsamında aşağıdaki çalışmaların gerçekleştirilmesi hedeflenmektedir:
+
+- Sprint 2'den kalan geliştirmelerin tamamlanması
+- Frontend ve backend entegrasyonunun kurulması
+- Geçici authentication sisteminden gerçek JWT authentication sistemine geçilmesi
+- Register endpointinin frontend'e bağlanması
+- Login endpointinin frontend'e bağlanması
+- Backend hata mesajlarının frontend'de gösterilmesi
+- PDF ve görsel yükleme akışının tamamlanması
+- Dosya türü ve boyutu kontrollerinin tamamlanması
+- OCR sonucunun Study Agent servisine gönderilmesi
+- Study Agent özet sonucunun frontend üzerinde gösterilmesi
+- Özet sonuçlarının veritabanına kaydedilmesi
+- Kullanıcıya ait geçmiş analiz sonuçlarının gösterilmesi
+- Career Agent geliştirilmesi
+- CV analizi özelliğinin hazırlanması
+- Coach Agent geliştirilmesi
+- Quiz özelliğinin geliştirilmesi
+- Gerekli görülürse Flashcard özelliğinin eklenmesi
+- Dashboard iyileştirmelerinin yapılması
+- Loading ve hata durumlarının tamamlanması
+- Uçtan uca sistem testlerinin yapılması
+- Responsive tasarım kontrollerinin yapılması
+- Hataların giderilmesi
+- README ve sprint dokümantasyonunun tamamlanması
+- Pull Request ve merge süreçlerinin tamamlanması
+- Üç dakikalık demo videosunun hazırlanması
+- Final sunumunun hazırlanması
+
+## Proje Durumu
+
+🟢 **Sprint 1 Tamamlandı**
+
+🔄 **Sprint 2 Devam Ediyor**
+
+⚪ **Sprint 3 Planlanıyor**
