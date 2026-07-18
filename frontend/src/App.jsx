@@ -5,18 +5,11 @@ import {
   Routes,
 } from "react-router-dom";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
-
-function Dashboard() {
-  return (
-    <div className="temporary-page">
-      <h1>UniMate AI Dashboard</h1>
-      <p>Başarıyla giriş yaptın.</p>
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -39,7 +32,11 @@ function App() {
 
         <Route
           path="/dashboard"
-          element={<Dashboard />}
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
 
         <Route
