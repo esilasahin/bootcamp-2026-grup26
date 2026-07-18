@@ -234,7 +234,7 @@ Sprint 2 görevleri Jira üzerinde oluşturulmuş ve takım üyelerinin teknik s
 Sprint kapsamında toplam yedi görev ve 24 Story Point planlanmıştır.
 
 ### Sprint Board Bağlantısı
-
+<img width="1478" height="943" alt="image" src="https://github.com/user-attachments/assets/7c7fbe85-601a-42a4-856e-deaffcf9f26b" />
 - [Jira Sprint 2 Board](https://stu-team-s6pfouz9.atlassian.net/jira/software/projects/YBG2/boards/1/backlog)
 Jira panosunda görevler aşağıdaki durumlara göre takip edilmektedir:
 - Yapılacaklar
