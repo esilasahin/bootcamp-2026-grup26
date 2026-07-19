@@ -330,29 +330,58 @@ Projenin temel frontend mimarisinde aşağıdaki teknolojiler kullanılmıştır
 * **Vite:** Hızlı ve modern frontend geliştirme aracı.
 * **ESLint:** Kod standartlarını korumak ve hata denetimi sağlamak için.
 * **CSS3:** Dış bir kütüphane kullanılmadan, modern "Glassmorphism" ve "Soft Shadow" teknikleriyle yazılmış özel arayüz tasarımı.
+  
 ### Backend Authentication ve PostgreSQL — Nurcan Altuğ
 
-Bu bölüm Nurcan Altuğ tarafından güncellenecektir.
+Bu görev kapsamında UniMate AI uygulamasının backend authentication sistemi ve veritabanı altyapısı geliştirilmiştir.
 
-Bu görev kapsamında planlanan çalışmalar:
+**Tamamlanan Çalışmalar:**
 
-- FastAPI backend projesinin hazırlanması
-- PostgreSQL veritabanı bağlantısı
-- Veritabanı modellerinin oluşturulması
-- User tablosunun oluşturulması
-- Document tablosunun oluşturulması
-- Analysis Result tablosunun oluşturulması
-- Veritabanı migration işlemleri
-- Register endpointinin hazırlanması
-- Login endpointinin hazırlanması
-- Kullanıcı şifrelerinin güvenli şekilde hashlenmesi
-- JWT access token oluşturulması
-- Authentication hata mesajlarının hazırlanması
-- Frontend bağlantısına uygun API çıktılarının oluşturulması
+- [x] FastAPI backend proje yapısı oluşturuldu.
+- [x] API endpointleri `/api/v1` sürüm yapısı altında düzenlendi.
+- [x] Ortak router sistemi oluşturuldu.
+- [x] Uygulama ayarlarının `.env` üzerinden yönetilebilmesi için environment variable yapısı kuruldu.
+- [x] PostgreSQL bağlantısı için SQLAlchemy engine ve session yapısı hazırlandı.
+- [x] Veritabanı işlemlerinde kullanılmak üzere ortak `get_db` dependency yapısı oluşturuldu.
+- [x] `User` tablosu oluşturuldu.
+- [x] `Document` tablosu oluşturuldu.
+- [x] `AnalysisResult` tablosu oluşturuldu.
+- [x] `User → Document → AnalysisResult` ilişkileri kuruldu.
+- [x] İlişkili kayıtlar için cascade silme davranışları tanımlandı.
+- [x] Alembic migration altyapısı kuruldu.
+- [x] İlk veritabanı migration dosyası oluşturuldu.
+- [x] Kullanıcı kayıt işlemi için `POST /api/v1/auth/register` endpointi geliştirildi.
+- [x] Kullanıcı giriş işlemi için `POST /api/v1/auth/login` endpointi geliştirildi.
+- [x] Swagger üzerinden token alınabilmesi için `POST /api/v1/auth/token` endpointi hazırlandı.
+- [x] Giriş yapan kullanıcının bilgilerini döndüren korumalı `GET /api/v1/users/me` endpointi geliştirildi.
+- [x] Kullanıcı şifrelerinin düz metin olarak saklanmasını önlemek için Argon2 tabanlı parola hashleme sistemi eklendi.
+- [x] JWT access token oluşturma ve doğrulama sistemi geliştirildi.
+- [x] Korumalı endpointlerde kullanılmak üzere `get_current_user` dependency yapısı oluşturuldu.
+- [x] Aynı e-posta adresiyle tekrar kayıt olunmasını engelleyen kontrol eklendi.
+- [x] Hatalı e-posta, yanlış şifre ve geçersiz token durumları için anlaşılır API hata mesajları hazırlandı.
+- [x] Register ve Login verileri için Pydantic doğrulamaları eklendi.
+- [x] Frontend tarafında kullanılan `fullName`, `isActive` ve `createdAt` alanlarıyla uyumlu API response yapısı hazırlandı.
+- [x] React uygulamasının backend API'ye erişebilmesi için CORS ayarları yapıldı.
+- [x] API ve veritabanı erişilebilirliğini kontrol eden health endpointleri eklendi.
+- [x] Authentication ve veritabanı modelleri için otomatik test senaryoları hazırlandı.
+- [x] PostgreSQL servisinin Docker üzerinden başlatılabilmesi için `docker-compose.yml` hazırlandı.
+- [x] Backend kurulum adımları ve frontend API sözleşmesi dokümante edildi.
+- [x] Geliştirmeler `feature/backend-auth-db` branch'i üzerinden GitHub'a gönderildi.
+
+#### Hazırlanan Temel API Endpointleri
+
+| Metot | Endpoint | Açıklama |
+|---|---|---|
+| `POST` | `/api/v1/auth/register` | Yeni kullanıcı kaydı oluşturur. |
+| `POST` | `/api/v1/auth/login` | Kullanıcı bilgilerini doğrular ve JWT access token döndürür. |
+| `POST` | `/api/v1/auth/token` | Swagger OAuth2 girişi için token oluşturur. |
+| `GET` | `/api/v1/users/me` | JWT ile doğrulanan kullanıcının bilgilerini döndürür. |
+| `GET` | `/api/v1/health` | Backend servisinin çalışıp çalışmadığını kontrol eder. |
+| `GET` | `/api/v1/health/database` | Veritabanı bağlantısının erişilebilirliğini kontrol eder. |
 
 #### Çalışma Durumu
 
-İlgili takım üyesi tarafından güncellenecektir.
+🟢 **Backend authentication ve veritabanı altyapısı tamamlanmış, geliştirilen kodlar `feature/backend-auth-db` branch’ine başarıyla yüklenmiştir.**
 
 ---
 
