@@ -411,27 +411,25 @@ Bu görev kapsamında planlanan çalışmalar:
 
 ---
 
-### Study Agent ve Özet Servisi — Hüseyin Tutak
+## Study Agent ve Özet Servisi — Hüseyin Tutak
 
-Bu bölüm Hüseyin Tutak tarafından güncellenecektir.
+Bu görev kapsamında UniMate AI uygulamasının yapay zeka entegrasyonu, metin işleme altyapısı ve özet servisleri başarıyla geliştirilmiştir.
 
-Bu görev kapsamında planlanan çalışmalar:
+### 🚀 Tamamlanan Çalışmalar
 
-- LLM servisi bağlantısı
-- Study Agent sistem promptunun hazırlanması
-- Uzun metinlerin parçalara ayrılması
-- Ders materyallerinin analiz edilmesi
-- Belge özetinin oluşturulması
-- Önemli noktaların çıkarılması
-- JSON formatında çıktı üretilmesi
-- Summary endpointinin hazırlanması
-- Başarısız LLM isteklerinin yönetilmesi
-- Üretilen sonuçların veritabanına kaydedilmesi
-- Özet sonucunun frontend'e gönderilmesi
+* Mock altyapı ve `BaseLLMProvider` ile esnek LLM servisi bağlantısı mimarisi kuruldu.
+* Study Agent sistem promptu altyapısı hazırlandı.
+* Uzun metinleri token sınırlarına uygun olarak bölen "Chunking" fonksiyonu geliştirildi.
+* Ders materyallerinin mantıksal olarak analiz edilmesi sağlandı.
+* Belge özetinin oluşturulması sağlandı.
+* Metin içerisinden önemli noktaların (key points) çıkarılması sağlandı.
+* Pydantic veri modelleri kullanılarak tip güvenli, düzenli JSON formatında çıktı üretilmesi garanti altına alındı.
+* FastAPI üzerinden frontend'in haberleşeceği `/api/summary` POST endpointi hazırlandı.
+* Başarısız veya boş dönen LLM istekleri için uygun hata yönetimi (HTTPException) eklendi.
+* Üretilen özet sonuçlarının veritabanına kaydedilmesi işlemi tamamlandı.
+* Özet sonucunun eksiksiz bir şekilde frontend'e gönderilmesi sağlandı.
 
-#### Çalışma Durumu
-
-İlgili takım üyesi tarafından güncellenecektir.
+**Çalışma Durumu:** 🟢 Tamamlandı. *(Yapay zeka analiz modülü ve API uç noktası başarıyla kodlandı, frontend ekibiyle veri alışverişine hazır durumda.)*
 
 ## Sprint Review
 
