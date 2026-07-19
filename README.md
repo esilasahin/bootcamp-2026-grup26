@@ -236,6 +236,11 @@ Sprint kapsamında toplam yedi görev ve 24 Story Point planlanmıştır.
 - Devam Ediyor
 - Tamamlandı
 
+### Sprint Sonunda Durum
+
+Sprint 2 sonunda planlanan görevler şu şekilde geliştirilmiştir
+<img width="1600" height="885" alt="WhatsApp Image 2026-07-19 at 22 15 41" src="https://github.com/user-attachments/assets/b2394afd-06c9-417f-8144-e30ad36f4dba" />
+
 ## Ürün Durumu
 
 Sprint 2 kapsamında UniMate AI uygulamasının çalışan temel kullanıcı akışının oluşturulmasına başlanmıştır.
