@@ -293,27 +293,48 @@ Frontend Authentication ve temel Dashboard tarafında aşağıdaki çalışmalar
 
 ---
 
+# ✨ UniMate AI - Frontend (Sprint 2)
+
+UniMate AI, üniversite öğrencilerinin akademik ve kariyer gelişim süreçlerini tek platformda yönetmelerini sağlayan çok ajanlı (Multi-Agent) yapay zekâ destekli kişisel asistandır. 
+
+Bu depo, projenin **Sprint 2** hedefleri doğrultusunda geliştirilen Kullanıcı Arayüzü (Frontend) kodlarını içermektedir. Bu sprint kapsamında **Dashboard ve Belge İşleme Arayüzleri** başarıyla tamamlanmış olup, modern web standartlarına uygun, hızlı ve kullanıcı dostu bir deneyim sunulmaktadır.
+
+## 🚀 Sprint 2 Görev Dağılımı ve İlerlemeler
+
 ### Frontend Belge Arayüzleri — Şifanur Karakılçık
 
-Bu bölüm Şifanur Karakılçık tarafından güncellenecektir.
+Bu görev kapsamında Dashboard ve Study Agent arayüzlerinin temel iskeleti, state (durum) yönetimleri ve kullanıcı deneyimi (UX) geliştirmeleri başarıyla tamamlanmıştır.
 
-Bu görev kapsamında planlanan çalışmalar:
+**Tamamlanan Çalışmalar:**
+- [x] PDF ve görsel (.jpg, .png) yükleme alanı oluşturuldu.
+- [x] Gizli input kullanılarak dosya seçme arayüzü tasarlandı.
+- [x] Dosya yükleme durumu ve bekleme (loading) göstergesi (spinner) eklendi.
+- [x] Dosya uzantısı ve boyutu (Maks: 5MB) kontrol edilerek hata mesajları (validasyon) entegre edildi.
+- [x] Backend dosya yükleme servisiyle bağlantı için `fetch` iskeleti ve hata yönetimi (try/catch) kuruldu.
+- [x] Study Agent sonucunun kullanıcıya şık bir kart yapısıyla gösterilmesi sağlandı.
+- [x] Son oluşturulan özetlerin Dashboard ekranında dinamik olarak listelenmesi sağlandı.
+- [x] Tüm sayfalarda modern (Glassmorphism esintili) ve ortak Layout tasarımıyla uyumlu bir arayüz kodlandı.
 
-- PDF ve görsel yükleme alanı
-- Dosya seçme arayüzü
-- Dosya yükleme durumu
-- Loading göstergesi
-- Hata mesajları
-- Özet sonuç ekranı
-- Backend dosya yükleme servisiyle bağlantı
-- Study Agent sonucunun kullanıcıya gösterilmesi
-- Mevcut Dashboard tasarımıyla uyumlu arayüz
+**Çalışma Durumu:**
+🟢 **Tamamlandı.** *(Arayüz ve frontend mantığı hazır, verilerin gerçek zamanlı akışı için Backend API entegrasyonu bekleniyor.)*
 
-#### Çalışma Durumu
+## 📸 Ekran Görüntüleri
 
-İlgili takım üyesi tarafından güncellenecektir.
+### Genel Bakış (Dashboard) - Boş Veri Durumu
+![Genel Bakış Ekranı] <img width="2560" height="1283" alt="1" src="https://github.com/user-attachments/assets/20976dd2-1436-401e-b7e9-316c7d0b1c3d" />
 
----
+
+### Study Agent - Dosya Yükleme Arayüzü
+![Study Agent Ekranı] <img width="2560" height="1272" alt="2" src="https://github.com/user-attachments/assets/f12f45ef-00cf-4956-bf30-a6c5e8c9ce66" />
+
+
+## 🛠️ Kullanılan Teknolojiler
+
+Projenin temel frontend mimarisinde aşağıdaki teknolojiler kullanılmıştır:
+* **React (v19):** Kullanıcı arayüzü kütüphanesi.
+* **Vite:** Hızlı ve modern frontend geliştirme aracı.
+* **ESLint:** Kod standartlarını korumak ve hata denetimi sağlamak için.
+* **CSS3:** Dış bir kütüphane kullanılmadan, modern "Glassmorphism" ve "Soft Shadow" teknikleriyle yazılmış özel arayüz tasarımı.
 
 ### Backend Authentication ve PostgreSQL — Nurcan Altuğ
 
