@@ -334,13 +334,7 @@ Bu görev kapsamında Dashboard ve Study Agent arayüzlerinin temel iskeleti, st
 
 ---
 
-## 📸 Ekran Görüntüleri
-
-### Genel Bakış (Dashboard) - Boş Veri Durumu
-<img width="2560" height="1283" alt="1" src="https://github.com/user-attachments/assets/20976dd2-1436-401e-b7e9-316c7d0b1c3d" />
-
-### Study Agent - Dosya Yükleme Arayüzü
-<img width="2560" height="1272" alt="2" src="https://github.com/user-attachments/assets/f12f45ef-00cf-4956-bf30-a6c5e8c9ce66" />
+## Ürün durumu başlığının altına görseller eklenmiştir. ✅
 
 ## 🛠️ Kullanılan Teknolojiler
 
