@@ -389,25 +389,43 @@ Bu görev kapsamında UniMate AI uygulamasının backend authentication sistemi 
 
 ### Dosya İşleme ve OCR — Yüksel Karan
 
-Bu bölüm Yüksel Karan tarafından güncellenecektir.
+Bu görev kapsamında MindForce projesinin dosya yükleme, PDF metin çıkarma ve görsellerden OCR (optik karakter tanıma) ile metin çıkarma altyapısı geliştirilmiştir.
 
-Bu görev kapsamında planlanan çalışmalar:
+**Tamamlanan Çalışmalar:**
 
-- Dosya yükleme endpointinin hazırlanması
-- PDF dosyalarının kabul edilmesi
-- Görsel dosyalarının kabul edilmesi
-- Dosya türü kontrolü
-- Dosya boyutu kontrolü
-- PDF içerisinden metin çıkarılması
-- Görsellerden OCR ile metin çıkarılması
-- Çıkarılan metnin temizlenmesi
-- Türkçe karakterlerin korunması
-- Başarısız OCR durumlarının yönetilmesi
-- Çıkarılan metnin Study Agent servisine uygun hâle getirilmesi
+- [x] Dosya yükleme ve metin çıkarma işlemleri için ayrı bir OCR router yapısı (`/ocr` prefix'i altında) oluşturuldu.
+- [x] Kullanıcının dosya yükleyip metin çıkarma işlemini tetiklediği `POST /ocr/upload` endpointi geliştirildi.
+- [x] PDF dosyalarının kabul edilmesi sağlandı.
+- [x] JPG, JPEG ve PNG formatındaki görsel dosyaların kabul edilmesi sağlandı.
+- [x] Desteklenmeyen dosya türlerini reddeden dosya uzantısı kontrolü eklendi; geçersiz türlerde anlaşılır bir 400 hata mesajı döndürülüyor.
+- [x] Yüklenen dosyaların, isim çakışmalarını önlemek için UUID tabanlı benzersiz isimlerle geçici olarak kaydedilmesi sağlandı.
+- [x] İşlem tamamlandıktan sonra geçici dosyaların otomatik olarak silinmesi (temizlik) mekanizması kuruldu.
+- [x] PDF dosyalarından **pdfplumber** ile sayfa sayfa doğrudan metin çıkarma sistemi geliştirildi (metin katmanı olan PDF'lerde OCR'a gerek kalmadan hızlı sonuç).
+- [x] Metin katmanı olmayan (taranmış) sayfaları tespit edip OCR için işaretleyen kontrol mekanizması eklendi.
+- [x] Bozuk font kodlaması nedeniyle güvenilmez metin üreten sayfaları (örn. "i" harflerinin apostrofa dönüştüğü durumlar) yakalayan güvenilirlik kontrolü geliştirildi; bu sayfalar otomatik olarak OCR'a yönlendiriliyor.
+- [x] Metinsiz PDF sayfalarının **pdf2image** ile 300 DPI çözünürlükte görsele çevrilmesi sağlandı.
+- [x] Görseller üzerinde **Tesseract** ile Türkçe dil desteği (`lang="tur"`) kullanılarak OCR sistemi geliştirildi.
+- [x] OCR çıktısında kelime bazlı güven skoru (confidence) kontrolü eklendi; düşük güven skorlu kelimeler (resim dokusundan "uydurulan" gürültü kelimeler) filtreleniyor.
+- [x] OCR ile çıkarılan kelimelerin blok / paragraf / satır bilgisine göre yeniden satırlara gruplanması sağlandı.
+- [x] Çıkarılan metni temizleyen `clean_ocr_text` fonksiyonu geliştirildi: fazla boşluklar tek boşluğa indiriliyor, gereksiz satır sonları düzenleniyor, satır başı/sonu boşlukları temizleniyor.
+- [x] Metin temizleme sırasında Türkçe karakterlerin (ç, ş, ğ, ı, ö, ü) korunması sağlandı.
+- [x] PDF, görsel ve karma (bazı sayfalar metin katmanı + bazı sayfalar OCR) senaryolarını tek noktadan yöneten orkestratör fonksiyon (`process_uploaded_file`) geliştirildi.
+- [x] Kullanılan yöntemin takip edilebilmesi için sonuçlara `method` alanı eklendi (`pdf_text` / `ocr` / `mixed`).
+- [x] Başarısız OCR durumları yönetildi: metin çıkarılamayan belgelerde ve işlem hatalarında anlaşılır Türkçe hata mesajlarıyla kontrollü sonuç döndürülüyor (endpoint tarafında 422 hatası).
+- [x] Çıkarılan metnin Study Agent servisine uygun, standart bir formatta sunulması sağlandı (`success`, `text`, `page_count`, `method`, `error` alanları).
+- [x] API response yapısı için Pydantic tabanlı `OCRResponse` şeması oluşturuldu.
+- [x] Geliştirmeler GitHub repository'sine gönderildi.
+
+#### Hazırlanan Temel API Endpointleri
+
+| Metot | Endpoint | Açıklama |
+|---|---|---|
+| `POST` | `/ocr/upload` | PDF veya görsel dosya yükler, metni çıkarır ve standart formatta döndürür. |
 
 #### Çalışma Durumu
 
-İlgili takım üyesi tarafından güncellenecektir.
+🟢 **Tamamlandı.** *(OCR pipeline'ı — dosya yükleme → tür kontrolü → PDF metin katmanı / OCR → metin temizleme → standart çıktı — uçtan uca çalışır durumdadır. Dosya boyutu kontrolü ve endpointin `/api/v1` sürüm yapısına entegrasyonu, Sprint 3'teki backend entegrasyon çalışmaları kapsamında tamamlanacaktır.)*
+
 
 ---
 
