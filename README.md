@@ -207,16 +207,11 @@ Planlanan görevler aşağıdaki gibidir:
 | PostgreSQL Veritabanı Altyapısı | Nurcan Altuğ | 3 SP | Takım üyesi tarafından güncellenecek |
 | PDF Yükleme ve Metin Çıkarma | Yüksel Karan | 4 SP | Takım üyesi tarafından güncellenecek |
 | Study Agent ile Özet Üretimi | Hüseyin Tutak | 3 SP | Takım üyesi tarafından güncellenecek |
-| Frontend Dosya Yükleme ve Özet Sonucu Bağlantısı | Şifanur Karakılçık | 2 SP | Tamamlandı ✅ |
+| Frontend Dosya Yükleme ve Özet Sonucu Bağlantısı | Şifanur Karakılçık | 2 SP | Tamamlandı |
 
 **Toplam planlanan: 24 Story Point**
 
-Şu anda kesin olarak tamamlanan görevler:
-
-- Frontend Authentication ve Routing — **5 SP**
-- Protected Route, Logout ve Temel Dashboard — **3 SP**
-
-**Kesin olarak tamamlanan: 8 Story Point**
+**Kesin olarak tamamlanan: 10 Story Point**
 
 Diğer görevlerin tamamlanma durumları ilgili takım üyeleri tarafından Jira panosunda ve README içerisindeki kendi bölümlerinde güncellenecektir.
 
@@ -297,14 +292,6 @@ Frontend Authentication ve temel Dashboard tarafında aşağıdaki çalışmalar
 
 ---
 
-# ✨ UniMate AI - Frontend (Sprint 2)
-
-UniMate AI, üniversite öğrencilerinin akademik ve kariyer gelişim süreçlerini tek platformda yönetmelerini sağlayan çok ajanlı (Multi-Agent) yapay zekâ destekli kişisel asistandır. 
-
-Bu depo, projenin **Sprint 2** hedefleri doğrultusunda geliştirilen Kullanıcı Arayüzü (Frontend) kodlarını içermektedir. Bu sprint kapsamında **Dashboard ve Belge İşleme Arayüzleri** başarıyla tamamlanmış olup, modern web standartlarına uygun, hızlı ve kullanıcı dostu bir deneyim sunulmaktadır.
-
-## 🚀 Sprint 2 Görev Dağılımı ve İlerlemeler
-
 ### Frontend Belge Arayüzleri — Şifanur Karakılçık
 
 Bu görev kapsamında Dashboard ve Study Agent arayüzlerinin temel iskeleti, state (durum) yönetimleri ve kullanıcı deneyimi (UX) geliştirmeleri başarıyla tamamlanmıştır.
@@ -328,7 +315,7 @@ Bu görev kapsamında Dashboard ve Study Agent arayüzlerinin temel iskeleti, st
 
 | Geliştirici | Puan | Durum |
 | :--- | :--- | :--- |
-| Şifanur Karakılçık | 2 SP | Tamamlandı ✅ |
+| Şifanur Karakılçık | 2 SP | Tamamlandı |
 
 *Not: Toplam planlanan 24 Story Point içerisinden Frontend Belge Arayüzleri görevi (2 SP) kesin olarak tamamlanmıştır.*
 
