@@ -330,7 +330,9 @@ Projenin temel frontend mimarisinde aşağıdaki teknolojiler kullanılmıştır
 * **Vite:** Hızlı ve modern frontend geliştirme aracı.
 * **ESLint:** Kod standartlarını korumak ve hata denetimi sağlamak için.
 * **CSS3:** Dış bir kütüphane kullanılmadan, modern "Glassmorphism" ve "Soft Shadow" teknikleriyle yazılmış özel arayüz tasarımı.
-  
+
+
+---
 ### Backend Authentication ve PostgreSQL — Nurcan Altuğ
 
 Bu görev kapsamında UniMate AI uygulamasının backend authentication sistemi ve veritabanı altyapısı geliştirilmiştir.
