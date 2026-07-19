@@ -157,7 +157,7 @@ Sprint hedeflerine başarıyla ulaşılmış ve ikinci sprintte geliştirme sür
 
 🟢 Sprint 1 Tamamlandı
 
-🔄 Sprint 2 Devam Ediyor
+✅️ Sprint 2 Tamamlandı
 
 ------------
 
@@ -551,6 +551,6 @@ Sprint 3 kapsamında aşağıdaki çalışmaların gerçekleştirilmesi hedeflen
 
 🟢 **Sprint 1 Tamamlandı**
 
-🔄 **Sprint 2 Devam Ediyor**
+✅️ **Sprint 2 Tamamlandı**
 
 ⚪ **Sprint 3 Planlanıyor**
