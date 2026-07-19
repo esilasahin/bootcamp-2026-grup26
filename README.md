@@ -1,4 +1,4 @@
-<img width="2560" height="1272" alt="2" src="https://github.com/user-attachments/assets/5780eaaa-6df8-472b-9954-1204a5e88b85" /># Takım İsmi
+# Takım İsmi
 
 MindForce - Grup26
 
