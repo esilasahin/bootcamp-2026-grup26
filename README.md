@@ -203,17 +203,16 @@ Planlanan görevler aşağıdaki gibidir:
 |---|---|---:|---|
 | Frontend Authentication ve Routing | Esila Şahin | 5 SP | Tamamlandı |
 | Protected Route, Logout ve Temel Dashboard | Esila Şahin | 3 SP | Tamamlandı |
-| FastAPI Backend ve Authentication API | Nurcan Altuğ | 4 SP | Takım üyesi tarafından güncellenecek |
-| PostgreSQL Veritabanı Altyapısı | Nurcan Altuğ | 3 SP | Takım üyesi tarafından güncellenecek |
-| PDF Yükleme ve Metin Çıkarma | Yüksel Karan | 4 SP | Takım üyesi tarafından güncellenecek |
-| Study Agent ile Özet Üretimi | Hüseyin Tutak | 3 SP | Takım üyesi tarafından güncellenecek |
+| FastAPI Backend ve Authentication API | Nurcan Altuğ | 4 SP | Tamamlandı |
+| PostgreSQL Veritabanı Altyapısı | Nurcan Altuğ | 3 SP | Tamamlandı |
+| PDF Yükleme ve Metin Çıkarma | Yüksel Karan | 4 SP | Tamamlandı |
+| Study Agent ile Özet Üretimi | Hüseyin Tutak | 3 SP | Tamamlandı |
 | Frontend Dosya Yükleme ve Özet Sonucu Bağlantısı | Şifanur Karakılçık | 2 SP | Tamamlandı |
 
 **Toplam planlanan: 24 Story Point**
+**Toplam tamamlanan: 24 Story Point**
 
-**Kesin olarak tamamlanan: 10 Story Point**
-
-Diğer görevlerin tamamlanma durumları ilgili takım üyeleri tarafından Jira panosunda ve README içerisindeki kendi bölümlerinde güncellenecektir.
+Sprint 2 kapsamında planlanan yedi görevin tamamı takım üyeleri tarafından geliştirilmiş ve görevlerin güncel durumları README içerisindeki ilgili çalışma bölümlerine eklenmiştir.
 
 ## Daily Scrum
 Takım iletişimi ve görev paylaşımı WhatsApp üzerinden düzenli olarak sürdürülmüştür.
@@ -475,9 +474,7 @@ Sprint sürecinde kesin olarak tamamlanan çalışmalar:
 - Görevler takım üyelerinin sorumluluklarına göre dağıtılmıştır.
 - Sprint 2 toplam 24 Story Point olarak planlanmıştır.
 
-Backend, veritabanı, OCR, Study Agent ve belge yükleme arayüzü çalışmalarının güncel durumu ilgili takım üyeleri tarafından kendi bölümlerine eklenecektir.
-
-Sprint sonunda tamamlanamayan geliştirmelerin Sprint 3 başlangıcında öncelikli olarak tamamlanmasına karar verilmiştir.
+Backend Authentication, PostgreSQL veritabanı, OCR, Study Agent ve frontend belge yükleme arayüzü çalışmaları ilgili takım üyeleri tarafından tamamlanmış ve README içerisindeki çalışma bölümlerine ayrıntılı olarak eklenmiştir.
 
 ## Sprint Retrospective
 
