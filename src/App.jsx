@@ -1,3 +1,4 @@
+import CareerAgent from "./CareerAgent";
 import { useState, useRef } from "react";
 
 export default function App() {
@@ -7,6 +8,15 @@ export default function App() {
   const [secilenDosyaAdi, setSecilenDosyaAdi] = useState("");
   const [hataMesaji, setHataMesaji] = useState("");
   const [sonOzet, setSonOzet] = useState(null);
+
+  // COACH AGENT - Örnek Haftalık Veri State'i
+  const [coachOnerisi, setCoachOnerisi] = useState({
+    mesaj: "Harika gidiyorsun! Bu hafta hem akademik hem de kariyer hedeflerini dengelemek için harika bir fırsat.",
+    hedefler: [
+      { tip: "academic", metin: "Yapay Zekaya Giriş dersi özetini tekrar et ve quiz modülünden test çöz." },
+      { tip: "career", metin: "CV'ne eklemek için GitHub'da basit bir portfolyo deposu oluştur." }
+    ]
+  });
   
   const dosyaGirdisiRef = useRef(null);
 
@@ -76,9 +86,13 @@ export default function App() {
               <span className="nav-icon">🧠</span> Study Agent
             </button>
 
-            <button disabled className="nav-btn disabled">
-              <span className="nav-icon">💼</span> Career Agent <span className="badge">Yakında</span>
+            <button 
+              onClick={() => { setAktifSayfa("career-agent"); setHataMesaji(""); }}
+              className={`nav-btn ${aktifSayfa === "career-agent" ? "active" : ""}`}
+            >
+              <span>💼</span> Career Agent
             </button>
+            
           </nav>
         </div>
         
@@ -95,7 +109,9 @@ export default function App() {
             <span style={{ color: "#94a3b8" }}>Panel</span> 
             <span style={{ margin: "0 10px", color: "#cbd5e1" }}>/</span> 
             <span style={{ color: "#1e293b", fontWeight: "600" }}>
-              {aktifSayfa === "dashboard" ? "Genel Bakış" : "Ders Çalışma Alanı"}
+              {aktifSayfa === "dashboard" && "Genel Bakış"}
+              {aktifSayfa === "study-agent" && "Ders Çalışma Alanı"}
+              {aktifSayfa === "career-agent" && "Kariyer Asistanı"}
             </span>
           </div>
           
@@ -111,6 +127,33 @@ export default function App() {
             <div className="fade-in">
               <h1 className="page-title">Genel Bakış</h1>
               <p className="page-subtitle">Akademik sürecini ve yapay zeka analizlerini buradan yönet.</p>
+
+              {/* COACH AGENT KARTI - YENİ EKLENDİ */}
+              <div className="glass-card" style={{ marginBottom: "24px", background: "linear-gradient(to right, #ffffff, #f8fafc)", borderLeft: "4px solid #8b5cf6" }}>
+                <h3 className="section-title" style={{ marginTop: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "24px" }}>🧭</span> Haftalık Koçluk Önerisi
+                </h3>
+                <p style={{ color: "#475569", fontSize: "15px", fontStyle: "italic", marginBottom: "20px" }}>
+                  "{coachOnerisi.mesaj}"
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {coachOnerisi.hedefler.map((hedef, index) => (
+                    <div key={index} style={{ 
+                      display: "flex", alignItems: "flex-start", gap: "12px", 
+                      padding: "16px", background: hedef.tip === "academic" ? "#eff6ff" : "#f0fdf4", 
+                      borderRadius: "12px", border: `1px solid ${hedef.tip === "academic" ? "#bfdbfe" : "#bbf7d0"}`
+                    }}>
+                      <div style={{ fontSize: "20px" }}>{hedef.tip === "academic" ? "📚" : "💼"}</div>
+                      <div>
+                        <strong style={{ display: "block", color: hedef.tip === "academic" ? "#1e40af" : "#166534", fontSize: "14px", marginBottom: "4px" }}>
+                          {hedef.tip === "academic" ? "Akademik Hedef" : "Kariyer Hedefi"}
+                        </strong>
+                        <span style={{ color: "#334155", fontSize: "15px" }}>{hedef.metin}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {!sonOzet ? (
                 <div className="glass-card text-center">
@@ -220,6 +263,8 @@ export default function App() {
               </div>
             </div>
           )}
+
+          {aktifSayfa === "career-agent" && <CareerAgent />}
 
         </div>
       </div>
