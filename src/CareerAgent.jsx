@@ -1,132 +1,168 @@
 import { useState, useRef } from "react";
+import { analyzeCV } from "./services/careerAgent";
+import { validateFile } from "./services/api";
+import { LoadingState, ErrorState } from "./components/StateComponents";
 
-export default function CareerAgent() {
+export default function CareerAgent({ onAnalysisComplete }) {
   const [yukleniyor, setYukleniyor] = useState(false);
   const [dosyaYuklendi, setDosyaYuklendi] = useState(false);
   const [secilenDosyaAdi, setSecilenDosyaAdi] = useState("");
   const [hataMesaji, setHataMesaji] = useState("");
   const [analizSonucu, setAnalizSonucu] = useState(null);
+  const [suruklemeAktif, setSuruklemeAktif] = useState(false);
 
   const dosyaGirdisiRef = useRef(null);
+  const dosyaSeciciyiAc = () => dosyaGirdisiRef.current.click();
 
-  const dosyaSeciciyiAc = () => {
-    dosyaGirdisiRef.current.click();
+  const dosyayiIsle = async (dosya) => {
+    setHataMesaji("");
+    if (!dosya) return;
+
+    const hata = validateFile(dosya, { allowed: ["pdf", "doc", "docx"], maxMB: 5 });
+    if (hata) {
+      setHataMesaji(hata);
+      return;
+    }
+
+    setSecilenDosyaAdi(dosya.name);
+    setYukleniyor(true);
+    try {
+      const sonuc = await analyzeCV(dosya);
+      setAnalizSonucu(sonuc);
+      setDosyaYuklendi(true);
+      onAnalysisComplete?.({ ...sonuc, dosya: dosya.name, tarih: new Date().toLocaleDateString("tr-TR") });
+    } catch (error) {
+      setHataMesaji(error.message);
+    } finally {
+      setYukleniyor(false);
+    }
   };
 
-  const dosyaSecildi = async (event) => {
+  const dosyaSecildi = (event) => dosyayiIsle(event.target.files[0]);
+
+  const surukleBirak = (event) => {
+    event.preventDefault();
+    setSuruklemeAktif(false);
+    dosyayiIsle(event.dataTransfer.files[0]);
+  };
+
+  const sifirla = () => {
+    setDosyaYuklendi(false);
+    setSecilenDosyaAdi("");
     setHataMesaji("");
-    const dosya = event.target.files[0];
-
-    if (dosya) {
-      if (!dosya.name.match(/\.(pdf|doc|docx)$/i)) {
-        setHataMesaji("Desteklenmeyen format! Lütfen CV'nizi PDF veya DOCX formatında yükleyin.");
-        return;
-      }
-      if (dosya.size > 5242880) {
-        setHataMesaji("Dosya çok büyük! Lütfen 5MB'den küçük bir özgeçmiş seçin.");
-        return;
-      }
-
-      setSecilenDosyaAdi(dosya.name);
-      setYukleniyor(true);
-
-      try {
-        // Yapay zeka servisinin yanıt süresini simüle ediyoruz (3 saniye)
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        setYukleniyor(false);
-        setDosyaYuklendi(true);
-
-        // Sistemin parse edeceği JSON formatında örnek bir AI Analiz Çıktısı
-        setAnalizSonucu({
-          score: 88,
-          education: ["Kütahya Dumlupınar Üniversitesi - Elektronik Ticaret ve Yönetimi Yüksek Lisans"],
-          experience: ["Özel Zonguldak Bahçeşehir Koleji - Robotik Kodlama Eğitmeni", "FPV Akademi - Eğitmen / Donanım Uzmanı"],
-          technical_skills: ["React", "Vite", "FastAPI", "Python", "3D CAD / Tersine Mühendislik", "Robotik Kodlama"],
-          soft_skills: ["Proje Yönetimi", "Takım Danışmanlığı (Çınar Kuvvetli mentorluğu)"],
-          missing_areas: ["Uluslararası bulut sertifikasyon eksiği (örn. AWS/Azure)", "Akademik makale yayınlarının uluslararası endekslerde olmaması"],
-          recommendations: ["Geliştirdiğin React ve FastAPI tabanlı çok ajanlı yapay zeka arayüz projelerini GitHub'da açık kaynak olarak yayınla.", "Eğitim teknolojileri (STEM ve Minecraft Education) üzerine yazdığın nitel araştırmaları sunmak için uluslararası sempozyumlara başvur."]
-        });
-      } catch (error) {
-        setYukleniyor(false);
-        setHataMesaji("Sistem Hatası: Kariyer yapay zeka servisine bağlanılamadı.");
-      }
-    }
+    setAnalizSonucu(null);
   };
 
   return (
     <div className="fade-in">
-      <h1 className="page-title">Kariyer Asistanı (Career Agent)</h1>
-      <p className="page-subtitle">Özgeçmişini yükle, yapay zeka eksiklerini bulup sana özel bir kariyer yolu çizsin.</p>
+      <h1 className="page-title">Kariyer Asistanı</h1>
+      <p className="page-subtitle">
+        Özgeçmişini yükle, yapay zeka eksiklerini bulup sana özel bir kariyer yolu çizsin.
+      </p>
 
-      {hataMesaji !== "" && (
-        <div className="error-alert fade-in">
-          <span className="error-icon">⚠️</span>
-          <div><strong>Hata:</strong> {hataMesaji}</div>
-        </div>
-      )}
+      <ErrorState message={hataMesaji} />
 
       <div className="glass-card">
-        
         {!dosyaYuklendi && !yukleniyor && (
-          <div className="upload-zone" onClick={dosyaSeciciyiAc}>
-            <input type="file" ref={dosyaGirdisiRef} onChange={dosyaSecildi} accept=".pdf, .doc, .docx" style={{ display: "none" }} />
-            <div className="upload-icon">📄</div>
+          <div
+            className={`upload-zone ${suruklemeAktif ? "dragging" : ""}`}
+            onClick={dosyaSeciciyiAc}
+            onDragOver={(e) => { e.preventDefault(); setSuruklemeAktif(true); }}
+            onDragLeave={() => setSuruklemeAktif(false)}
+            onDrop={surukleBirak}
+          >
+            <input
+              type="file"
+              ref={dosyaGirdisiRef}
+              onChange={dosyaSecildi}
+              accept=".pdf, .doc, .docx"
+              style={{ display: "none" }}
+            />
             <h4 className="upload-title">CV yüklemek için buraya tıkla veya sürükle</h4>
             <p className="upload-desc">Desteklenen Dosyalar: PDF, DOC, DOCX (Maks: 5MB)</p>
           </div>
         )}
 
         {yukleniyor && (
-          <div className="loading-state fade-in">
-            <div className="spinner"></div>
-            <h4 className="loading-title">Yapay Zeka CV'ni Analiz Ediyor...</h4>
-            <p className="loading-desc">Eğitim geçmişin, deneyimlerin ve becerilerin çıkarılıyor: <span className="highlight-text">{secilenDosyaAdi}</span></p>
-          </div>
+          <LoadingState
+            title="Yapay Zeka CV'ni Analiz Ediyor..."
+            desc="Eğitim geçmişin, deneyimlerin ve becerilerin çıkarılıyor:"
+            dosyaAdi={secilenDosyaAdi}
+          />
         )}
 
         {dosyaYuklendi && analizSonucu && (
           <div className="fade-in">
             <div className="success-alert">
-              <div className="success-icon">✅</div>
               <div>
-                <strong style={{ display: "block", marginBottom: "4px" }}>Harika! CV'n başarıyla analiz edildi.</strong>
+                <strong style={{ display: "block", marginBottom: "4px" }}>
+                  CV'n başarıyla analiz edildi.
+                </strong>
                 <span style={{ fontSize: "14px", opacity: 0.9 }}>İşlenen Dosya: {secilenDosyaAdi}</span>
               </div>
             </div>
 
             <div className="result-card">
-              <div className="result-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div><span className="result-header-icon" style={{ marginRight: '8px' }}>🎯</span> Kariyer Analiz Sonucu</div>
-                <div style={{ background: '#3b82f6', color: 'white', padding: '6px 14px', borderRadius: '20px', fontSize: '14px', fontWeight: 'bold' }}>
-                  Puan: {analizSonucu.score}/100
-                </div>
+              <div
+                className="result-header"
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <div>Kariyer Analiz Sonucu</div>
+                <div className="score-badge">Puan: {analizSonucu.score}/100</div>
               </div>
-              <div className="result-body">
-                <h4 className="result-section-title">💻 Tespit Edilen Teknik Beceriler</h4>
-                <p className="result-text">{analizSonucu.technical_skills.join(", ")}</p>
 
-                <h4 className="result-section-title">🔍 Gelişime Açık Alanlar (Eksikler)</h4>
+              <div className="result-body">
+                {analizSonucu.education?.length > 0 && (
+                  <>
+                    <h4 className="result-section-title">Eğitim</h4>
+                    <ul className="result-list">
+                      {analizSonucu.education.map((e, i) => <li key={i}>{e}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                {analizSonucu.experience?.length > 0 && (
+                  <>
+                    <h4 className="result-section-title">Deneyim</h4>
+                    <ul className="result-list">
+                      {analizSonucu.experience.map((e, i) => <li key={i}>{e}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                <h4 className="result-section-title">Teknik Beceriler</h4>
+                <div className="skill-chips">
+                  {analizSonucu.technical_skills?.map((s, i) => (
+                    <span key={i} className="skill-chip">{s}</span>
+                  ))}
+                </div>
+
+                {analizSonucu.soft_skills?.length > 0 && (
+                  <>
+                    <h4 className="result-section-title" style={{ marginTop: "24px" }}>Sosyal Beceriler</h4>
+                    <div className="skill-chips">
+                      {analizSonucu.soft_skills.map((s, i) => (
+                        <span key={i} className="skill-chip soft">{s}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <h4 className="result-section-title" style={{ marginTop: "24px" }}>Gelişime Açık Alanlar</h4>
                 <ul className="result-list">
-                  {analizSonucu.missing_areas.map((area, index) => <li key={index}>{area}</li>)}
+                  {analizSonucu.missing_areas?.map((area, i) => <li key={i}>{area}</li>)}
                 </ul>
 
-                <h4 className="result-section-title">💡 Yapay Zeka Önerileri</h4>
+                <h4 className="result-section-title">Yapay Zeka Önerileri</h4>
                 <ul className="result-list">
-                  {analizSonucu.recommendations.map((rec, index) => <li key={index}>{rec}</li>)}
+                  {analizSonucu.recommendations?.map((rec, i) => <li key={i}>{rec}</li>)}
                 </ul>
               </div>
             </div>
 
-            <button
-              onClick={() => { setDosyaYuklendi(false); setSecilenDosyaAdi(""); setHataMesaji(""); setAnalizSonucu(null); }}
-              className="btn-secondary"
-            >
-              Yeni CV Yükle
-            </button>
+            <button onClick={sifirla} className="btn-secondary">Yeni CV Yükle</button>
           </div>
         )}
-
       </div>
     </div>
   );

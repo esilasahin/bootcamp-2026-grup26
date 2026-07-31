@@ -1,160 +1,64 @@
-# Takım İsmi
+# UniMate AI — Frontend (Dashboard & Agent Ekranları)
 
-MindForce - Grup26
+MindForce (Grup 26) tarafından geliştirilen UniMate AI uygulamasının frontend katmanıdır. Uygulama; üniversite öğrencilerinin akademik ve kariyer gelişimini tek panelden yönetmesini sağlayan çok ajanlı bir yapay zeka asistanıdır. Bu depo Study Agent, Career Agent, Coach Agent, Quiz ve Dashboard ekranlarının arayüzünü ve backend'e bağlanacak servis katmanını içerir.
 
-# Ürün ile İlgili Bilgiler
+## Kullanılan Teknolojiler
 
-## Takım Elemanları
+- React 19
+- Vite
+- Saf CSS (tema tek dosyada, `App.jsx` içindeki style bloğunda)
+- ESLint
 
-- **Hüseyin Tutak:** Product Owner
-- **Esila Şahin:** Scrum Master
-- **Şifanur Karakılçık:** Developer
-- **Nurcan Altuğ:** Developer
-- **Yüksel Karan:** Developer
+## Kurulum ve Çalıştırma
 
-## Ürün İsmi
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
 
-**UniMate AI**
+`npm run dev` komutu geliştirme sunucusunu başlatır ve tarayıcıda `http://localhost:5173` adresini açar. Diğer komutlar; kod kontrolü için `npm run lint`, teslim derlemesi için `npm run build`, derlemeyi önizlemek için `npm run preview` şeklindedir.
 
-## Ürün Açıklaması
+## Proje Yapısı
 
-UniMate AI, üniversite öğrencilerinin akademik ve kariyer gelişim süreçlerini tek platformda yönetmelerini sağlayan çok ajanlı (Multi-Agent) yapay zekâ destekli kişisel asistandır.
+```
+src/
+  App.jsx                 Ana uygulama, sidebar, dashboard ve sayfa yönlendirmesi
+  CareerAgent.jsx         CV yükleme ve analiz sonucu ekranı
+  QuizAgent.jsx           Quiz oluşturma ve soru cevap akışı
+  CoachCard.jsx           Haftalık koçluk önerisi kartı
+  NavIcons.jsx            Menü ikonları ve mezuniyet capi çizimi
+  components/
+    StateComponents.jsx   Ortak loading, hata ve boş durum bileşenleri
+  services/
+    api.js                Ortak fetch yardımcısı, token ve dosya doğrulama
+    careerAgent.js        CV analizi, iş ilanı eşleştirme, geçmiş servisleri
+    quizAgent.js          Quiz üretimi ve sonuç kaydı servisleri
+    coachAgent.js         Koç önerisi servisi
+    studyAgent.js         Ders materyali özetleme servisi
+```
 
-Sistem; öğrencinin yüklediği ders notları, PDF dokümanları, CV'si ve kariyer hedeflerini analiz ederek öğrencinin akademik ve kariyer gelişimini destekler. Ders materyallerini özetler, quiz oluşturur, çalışma planı hazırlar, CV analizi yapar ve kariyer gelişimine yönelik kişiselleştirilmiş öneriler sunar.
+## Yapılanlar
 
-UniMate AI, yalnızca soru-cevap yapan bir sohbet botu değil; öğrencinin gelişimini takip eden ve ona özel öneriler sunan akıllı bir akademik ve kariyer koçudur.
+Uygulamanın frontend tarafı bu depoda tamamlanmıştır. Sol menü açılıp kapanabilir; kapandığında logo mezuniyet capine dönüşür ve menü öğeleri ikonlara indirgenir. Dashboard ekranı Study, Career ve Coach sonuçlarını tek panelde toplar; son yüklenen dosyalar, haftalık ilerleme ve hedef kartları burada gösterilir. Career Agent ekranında kullanıcı CV yükler, sonuç ekranında puan, teknik ve sosyal beceriler, eksik alanlar ve öneriler listelenir. Quiz ekranında kullanıcı ders özetlerinden ya da eski dosya konularından konu seçebilir, kendi konusunu yazabilir veya PDF ya da görsel yükleyerek quiz oluşturabilir; soru cevap akışı ve sonuç değerlendirmesi hazırdır. Coach kartında akademik ve kariyer hedefleri için tamamlandı işareti, süreyi gösteren analog bir sayaç ve hedef tamamlanınca yeni konu getirme davranışı bulunur. Tüm ekranlar responsive olup ortak loading, hata ve boş durum bileşenlerini kullanır.
 
-## Ürün Özellikleri
+## Yapılacaklar ve Backend Bağlantı Noktaları
 
-- PDF ve ders notlarını analiz etme
-- OCR ile görsellerden metin çıkarma
-- Ders özeti oluşturma
-- Quiz oluşturma
-- Flashcard oluşturma
-- Kişiselleştirilmiş çalışma planı hazırlama
-- CV analizi yapma
-- İş ilanı ile CV eşleştirmesi
-- Eksik becerileri analiz ederek kariyer önerileri sunma
-- Haftalık gelişim önerileri oluşturma
+Frontend, backend hazır olduğunda gerçek veriyle çalışacak şekilde kurgulanmıştır. Servis dosyalarındaki her fonksiyon ilgili endpoint'e istek atar ve bağlantı noktası kod içinde kısa bir not ile işaretlenmiştir. Backend ekibi bu endpoint'leri sağladığında `.env` dosyasındaki `VITE_API_URL` değeri girilerek uygulama gerçek veriye bağlanır. Beklenen bağlantılar şunlardır.
 
-## Hedef Kitle
+- Ders materyali özetleme için `services/studyAgent.js` içindeki fonksiyon `POST /api/study/summarize` adresine dosya gönderir ve yanıt olarak `baslik`, `anaTemalar` ve `onemliNoktalar` alanlarını bekler.
+- CV analizi için `services/careerAgent.js` içindeki fonksiyon `POST /api/career/analyze` adresine CV dosyasını gönderir ve `score`, `education`, `experience`, `technical_skills`, `soft_skills`, `missing_areas`, `recommendations` alanlarını bekler.
+- Quiz üretimi için `services/quizAgent.js` içindeki fonksiyon `POST /api/quiz/generate` adresine konu ya da dosya gönderir ve `quizId`, `konu` ile birlikte `questions` listesini bekler. Her soru `question`, `options`, `correctIndex` ve `explanation` alanlarını içerir.
+- Quiz sonucu kaydı için aynı dosyadaki fonksiyon `POST /api/quiz/submit` adresine cevapları gönderir ve `score`, `correct`, `total` alanlarını bekler.
+- Koç önerisi için `services/coachAgent.js` içindeki fonksiyon `POST /api/coach/recommend` adresine Study ve Career sonuçlarını gönderir ve `mesaj`, `hedefler` ile `haftalikIlerleme` alanlarını bekler.
+- Kimlik doğrulama tarafında `services/api.js` isteklere `localStorage` içindeki `unimate_token` değerini Authorization başlığı olarak ekler. Giriş akışı bu değeri kaydettiğinde korumalı istekler otomatik olarak çalışır.
 
-- Üniversite öğrencileri
-- Yeni mezunlar
-- Bootcamp katılımcıları
-- Kariyer planlaması yapan öğrenciler
-- Akademik başarısını artırmak isteyen öğrenciler
+Backend yanıtları yukarıdaki alan adlarıyla döndüğünde ekranlarda başka bir değişiklik yapılmasına gerek kalmadan veriler görüntülenir.
 
-## Product Backlog URL
+## Ortam Değişkenleri
 
-**Miro Board:** [(Miro bağlantısı)](https://miro.com/app/board/uXjVH-xMq9c=/?share_link_id=989063034731)
+`.env` dosyasında yalnızca backend adresi tutulur.
 
----
-
-# Sprint 1
-
-## Sprint Notları
-
-Sprint 1 kapsamında ürün fikri belirlenmiş, kullanıcı ihtiyaçları analiz edilmiş ve UniMate AI'ın MVP kapsamı oluşturulmuştur.
-
-Bu sprintte ürün vizyonu oluşturulmuş, Product Backlog hazırlanmış, takım görev dağılımları yapılmış, kullanılacak teknolojiler belirlenmiş ve GitHub proje yapısı oluşturulmuştur.
-
-Sprint sonunda geliştirme sürecine hazır bir proje planı oluşturularak ikinci sprintte geliştirme çalışmalarına başlanmasına karar verilmiştir.
-
----
-
-## Sprint İçinde Tamamlanması Tahmin Edilen Puan
-
-**24 Story Point**
-
----
-
-## Puan Tamamlama Mantığı
-
-Toplam Product Backlog **63 Story Point** olarak planlanmıştır.
-
-Sprint 1 kapsamında tamamlanan çalışmalar aşağıdaki gibidir:
-
-- Product Vision (3 SP)
-- README Hazırlanması (2 SP)
-- Product Backlog Oluşturulması (3 SP)
-- Wireframe Tasarımı (5 SP)
-- Teknoloji Araştırması (3 SP)
-- GitHub Repository Kurulumu (2 SP)
-- Multi-Agent Mimarisinin Tasarlanması (6 SP)
-
-Toplam: **24 Story Point**
-
----
-
-## Daily Scrum
-
-Takım üyelerinin Daily Scrum toplantıları ortak günlerde WhatsApp üzerinden paylaşılan google meet ile yapılmaktadır.
-<img width="1080" height="1931" alt="WhatsApp Image 2026-07-05 at 20 35 34" src="https://github.com/user-attachments/assets/4a5a023f-674a-4383-afaa-0dece00786a7" />
-<img width="1080" height="763" alt="WhatsApp Image 2026-07-05 at 20 36 09" src="https://github.com/user-attachments/assets/26600b14-7784-478b-9a22-f011b2ee76b3" />
-
-
-
----
-
-## Sprint Board Update
-
-Sprint planlaması Miro üzerinden gerçekleştirilmiştir.
-
-Sprint Board ekran görüntüsü aşağıda paylaşılmıştır.
-
-**Sprint Board Screenshot**
-
-*(Miro ekran görüntüsü)* <img width="1242" height="867" alt="image" src="https://github.com/user-attachments/assets/a4bbe7f9-24d8-4810-932d-e3065be096c7" />
-
----
-
-## Ürün Durumu: 
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/2a191d4d-2228-4e5d-9edd-6f48cb724a44" />
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/72afb9c5-1352-4c6f-803e-1e73171769f6" />
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/1186b514-822c-4698-a7e7-dd7e9ae869cd" />
-
-## Sprint Review
-
-Sprint sonunda yapılan değerlendirme sonucunda;
-
-- Ürün fikri UniMate AI olarak belirlenmiştir.
-- MVP kapsamı oluşturulmuştur.
-- Study Agent, Career Agent ve Coach Agent yapısı belirlenmiştir.
-- Ürün mimarisi planlanmıştır.
-- Product Backlog hazırlanmıştır.
-- Wireframe tasarımları oluşturulmuştur.
-- Kullanılacak teknoloji altyapısı belirlenmiştir.
-- GitHub repository oluşturulmuştur.
-
-Sprint hedeflerine başarıyla ulaşılmış ve ikinci sprintte geliştirme sürecine başlanmasına karar verilmiştir.
-
-<img width="1372" height="628" alt="image" src="https://github.com/user-attachments/assets/cf83c4a9-00a9-4fb5-b82d-1c271b94854d" />
-
-
----
-
-## Sprint Retrospective
-
-### Alınan Kararlar
-
-- Takım içi görev dağılımının sprint başlamadan önce netleştirilmesine karar verilmiştir.
-- Sprint boyunca günlük iletişimin düzenli olarak sürdürülmesine karar verilmiştir.
-- Kod geliştirme sürecinde backend ve frontend ekiplerinin eş zamanlı ilerlemesi planlanmıştır.
-- MVP kapsamı dışındaki özelliklerin sonraki sürümlere bırakılması kararlaştırılmıştır.
-
-### Sprint 2 Hedefleri
-
-- Authentication sisteminin geliştirilmesi
-- Dashboard arayüzünün oluşturulması
-- OCR entegrasyonunun tamamlanması
-- Study Agent geliştirilmesi
-- Career Agent geliştirilmesi
-- Veritabanı altyapısının oluşturulması
-- Backend API geliştirilmesi
-
-# Proje Durumu
-
-🟢 Sprint 1 Tamamlandı
-
-🔄 Sprint 2 Devam Ediyor
+```
+VITE_API_URL=http://localhost:8000
+```
