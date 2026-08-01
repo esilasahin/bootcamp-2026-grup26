@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _DEFAULT_JWT_SECRET = "change-this-secret-before-production"
@@ -52,6 +52,24 @@ class Settings(BaseSettings):
         le=600,
     )
 
+    # LLM yapılandırması
+    llm_provider: Literal["local", "gemini"] = "local"
+    gemini_api_key: SecretStr | None = Field(
+        default=None,
+        repr=False,
+    )
+    gemini_model: str = "gemini-3.6-flash"
+    llm_timeout_seconds: int = Field(
+        default=30,
+        ge=5,
+        le=120,
+    )
+    llm_max_input_chars: int = Field(
+        default=50_000,
+        ge=1_000,
+        le=200_000,
+    )
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -76,7 +94,7 @@ class Settings(BaseSettings):
         }
 
     @model_validator(mode="after")
-    def reject_default_secret_in_production(self) -> "Settings":
+    def validate_security_and_llm_settings(self) -> "Settings":
         is_production = self.environment.lower() in {
             "production",
             "prod",
@@ -86,6 +104,12 @@ class Settings(BaseSettings):
             raise ValueError(
                 "Production ortamında varsayılan "
                 "JWT_SECRET_KEY kullanılamaz."
+            )
+
+        if self.llm_provider == "gemini" and self.gemini_api_key is None:
+            raise ValueError(
+                "LLM_PROVIDER=gemini kullanıldığında "
+                "GEMINI_API_KEY tanımlanmalıdır."
             )
 
         return self

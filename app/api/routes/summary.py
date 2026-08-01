@@ -1,9 +1,11 @@
+from functools import lru_cache
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 
 from app.api.dependencies import CurrentUser, DbSession
+from app.core.config import settings
 from app.models.analysis_result import AnalysisResult
 from app.models.document import Document
 from app.schemas.common import ApiResponse
@@ -14,6 +16,8 @@ from app.schemas.summary import (
 from app.services.chunking import chunk_text
 from app.services.llm_provider import (
     BaseLLMProvider,
+    GeminiSummaryProvider,
+    LLMProviderError,
     LocalSummaryProvider,
 )
 
@@ -23,7 +27,21 @@ router = APIRouter(
 )
 
 
+@lru_cache
 def get_summary_provider() -> BaseLLMProvider:
+    if settings.llm_provider == "gemini":
+        if settings.gemini_api_key is None:
+            raise RuntimeError(
+                "Gemini API anahtarı yapılandırılmamış."
+            )
+
+        return GeminiSummaryProvider(
+            api_key=settings.gemini_api_key.get_secret_value(),
+            model=settings.gemini_model,
+            timeout_seconds=settings.llm_timeout_seconds,
+            max_input_chars=settings.llm_max_input_chars,
+        )
+
     return LocalSummaryProvider()
 
 
@@ -93,7 +111,7 @@ async def create_summary(
                     summary_response.key_points.model_dump()
                 ),
                 "chunkCount": len(chunks),
-                "provider": "local",
+                "provider": provider.provider_name,
             },
         )
         db.add(analysis_result)
@@ -104,6 +122,12 @@ async def create_summary(
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=str(exc),
+        ) from exc
+    except LLMProviderError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(exc),
         ) from exc
     except Exception as exc:
