@@ -18,3 +18,5 @@ Pillow==12.3.0
 # Test
 pytest==9.0.2
 httpx==0.28.1
+
+google-genai==2.16.0

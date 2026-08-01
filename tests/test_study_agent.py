@@ -1,9 +1,27 @@
+import pytest
 from sqlalchemy import select
 
+from app.api.routes.summary import get_summary_provider
 from app.db.session import SessionLocal
+from app.main import app
 from app.models.analysis_result import AnalysisResult
 from app.models.document import Document
 from app.models.user import User
+from app.services.llm_provider import LocalSummaryProvider
+
+
+@pytest.fixture(autouse=True)
+def use_local_summary_provider():
+    app.dependency_overrides[get_summary_provider] = (
+        lambda: LocalSummaryProvider()
+    )
+
+    yield
+
+    app.dependency_overrides.pop(
+        get_summary_provider,
+        None,
+    )
 
 
 def auth_headers(client, email):
@@ -90,6 +108,7 @@ def test_summary_is_created_and_saved(client):
         assert result.document_id == document_id
         assert result.analysis_type == "summary"
         assert result.result_text
+        assert result.result_data["provider"] == "local"
 
 
 def test_user_cannot_summarize_another_users_document(client):
