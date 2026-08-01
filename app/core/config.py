@@ -15,13 +15,42 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite+pysqlite:///./unimate.db"
 
-    jwt_secret_key: str = Field(default=_DEFAULT_JWT_SECRET, min_length=32)
+    jwt_secret_key: str = Field(
+        default=_DEFAULT_JWT_SECRET,
+        min_length=32,
+    )
     jwt_algorithm: Literal["HS256", "HS384", "HS512"] = "HS256"
-    access_token_expire_minutes: int = Field(default=60, gt=0, le=10_080)
+    access_token_expire_minutes: int = Field(
+        default=60,
+        gt=0,
+        le=10_080,
+    )
 
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
-    max_upload_size_mb: int = Field(default=10, gt=0, le=50)
+    cors_origins: str = (
+        "http://localhost:5173,"
+        "http://127.0.0.1:5173"
+    )
+
+    max_upload_size_mb: int = Field(
+        default=10,
+        gt=0,
+        le=50,
+    )
     allowed_cv_extensions: str = "pdf,docx,txt"
+
+    # OCR yapılandırması
+    tesseract_cmd: str | None = None
+    poppler_path: str | None = None
+    ocr_language: str = Field(
+        default="tur",
+        min_length=3,
+        max_length=20,
+    )
+    ocr_dpi: int = Field(
+        default=300,
+        ge=150,
+        le=600,
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -32,16 +61,33 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> list[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        return [
+            origin.strip()
+            for origin in self.cors_origins.split(",")
+            if origin.strip()
+        ]
 
     @property
     def allowed_cv_extension_set(self) -> set[str]:
-        return {item.strip().lower().lstrip(".") for item in self.allowed_cv_extensions.split(",") if item.strip()}
+        return {
+            item.strip().lower().lstrip(".")
+            for item in self.allowed_cv_extensions.split(",")
+            if item.strip()
+        }
 
     @model_validator(mode="after")
     def reject_default_secret_in_production(self) -> "Settings":
-        if self.environment.lower() in {"production", "prod"} and self.jwt_secret_key == _DEFAULT_JWT_SECRET:
-            raise ValueError("Production ortamında varsayılan JWT_SECRET_KEY kullanılamaz.")
+        is_production = self.environment.lower() in {
+            "production",
+            "prod",
+        }
+
+        if is_production and self.jwt_secret_key == _DEFAULT_JWT_SECRET:
+            raise ValueError(
+                "Production ortamında varsayılan "
+                "JWT_SECRET_KEY kullanılamaz."
+            )
+
         return self
 
 

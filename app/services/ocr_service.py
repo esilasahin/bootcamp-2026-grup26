@@ -19,15 +19,19 @@ import pdfplumber
 import pytesseract
 from pdf2image import convert_from_path
 from PIL import Image
+from app.core.config import settings
 
 
 # ---------------------------------------------------------------------------
 # AYARLAR
 # ---------------------------------------------------------------------------
 
-DPI = 300  # PDF sayfalarını görsele çevirirken kullanılacak çözünürlük
-OCR_LANG = "tur"  # Tesseract dil paketi (Türkçe)
+DPI = settings.ocr_dpi
+OCR_LANG = settings.ocr_language
 SUPPORTED_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
+
+if settings.tesseract_cmd:
+    pytesseract.pytesseract.tesseract_cmd = settings.tesseract_cmd
 
 # Tesseract'ın bir kelimeyi "gerçek metin" sayması için gereken minimum
 # güven skoru (0-100 arası). Bunun altındaki kelimeler genelde resim
@@ -114,11 +118,12 @@ def convert_pdf_page_to_image(file_path: str, page_number: int) -> Image.Image:
     page_number + 1 kullanıyoruz.
     """
     images = convert_from_path(
-        file_path,
-        dpi=DPI,
-        first_page=page_number + 1,
-        last_page=page_number + 1,
-    )
+    file_path,
+    dpi=DPI,
+    first_page=page_number + 1,
+    last_page=page_number + 1,
+    poppler_path=settings.poppler_path,
+)
 
     if not images:
         raise ValueError(f"Sayfa {page_number} görsele çevrilemedi.")
