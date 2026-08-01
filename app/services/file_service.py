@@ -26,7 +26,7 @@ async def read_and_validate_cv(file: UploadFile) -> tuple[bytes, str]:
     if not content:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Boş dosya yüklenemez.")
     if len(content) > limit:
-        raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail=f"Dosya en fazla {settings.max_upload_size_mb} MB olabilir.")
+        raise HTTPException(status_code=status.HTTP_413_CONTENT_TOO_LARGE, detail=f"Dosya en fazla {settings.max_upload_size_mb} MB olabilir.")
     return content, extension
 
 
@@ -39,7 +39,7 @@ def extract_text(content: bytes, extension: str) -> str:
         else:
             text = content.decode("utf-8-sig")
     except Exception as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Dosya içeriği okunamadı veya dosya bozuk.") from exc
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Dosya içeriği okunamadı veya dosya bozuk.") from exc
     if len(text.strip()) < 20:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Analiz için dosyada yeterli metin bulunamadı.")
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Analiz için dosyada yeterli metin bulunamadı.")
     return text.strip()
