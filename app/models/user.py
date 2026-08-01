@@ -7,7 +7,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.coach_recommendation import CoachRecommendation
+    from app.models.cv_analysis import CVAnalysis
     from app.models.document import Document
+    from app.models.quiz_result import QuizResult
 
 
 class User(Base):
@@ -30,3 +33,6 @@ class User(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+    cv_analyses: Mapped[list["CVAnalysis"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    quiz_results: Mapped[list["QuizResult"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    coach_recommendations: Mapped[list["CoachRecommendation"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)

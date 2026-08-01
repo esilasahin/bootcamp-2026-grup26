@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(default=60, gt=0, le=10_080)
 
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    max_upload_size_mb: int = Field(default=10, gt=0, le=50)
+    allowed_cv_extensions: str = "pdf,docx,txt"
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -31,6 +33,10 @@ class Settings(BaseSettings):
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def allowed_cv_extension_set(self) -> set[str]:
+        return {item.strip().lower().lstrip(".") for item in self.allowed_cv_extensions.split(",") if item.strip()}
 
     @model_validator(mode="after")
     def reject_default_secret_in_production(self) -> "Settings":

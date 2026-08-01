@@ -15,6 +15,8 @@
 - `GET /users/me` korumalı endpointi
 - CORS ve Swagger
 - Authentication ve model testleri
+- CV analizi, kariyer quiz sonucu, iş ilanı eşleştirme ve coach önerileri
+- Kullanıcı analiz geçmişi, standart hata cevapları ve dosya doğrulama
 
 ## Bu pakette özellikle bulunmayanlar
 
@@ -97,6 +99,12 @@ pytest
 | GET | `/api/v1/users/me` | Giriş yapan kullanıcı | Evet |
 | GET | `/api/v1/health` | Servis kontrolü | Hayır |
 | GET | `/api/v1/health/database` | Veritabanı kontrolü | Hayır |
+| GET | `/api/v1/quizzes/career` | Kariyer quiz sorularını getirir | Evet |
+| POST | `/api/v1/cv/analyze` | PDF, DOCX veya TXT CV analizi | Evet |
+| POST | `/api/v1/quizzes/results` | Quiz sonucunu hesaplar ve kaydeder | Evet |
+| POST | `/api/v1/jobs/match` | Son/seçilen CV analiziyle ilanı eşleştirir | Evet |
+| POST | `/api/v1/coach/recommendations` | Kişiselleştirilmiş coach önerisi üretir | Evet |
+| GET | `/api/v1/users/me/analysis-history` | Analiz geçmişini getirir | Evet |
 
 
 
@@ -123,4 +131,3 @@ alembic downgrade base
 
 Sonuç: **11 test başarılı**, bağımlılık çakışması yok, migration ile SQLAlchemy
 modelleri uyumlu ve uygulama Uvicorn üzerinden başlatılabiliyor.
-

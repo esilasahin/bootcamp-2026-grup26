@@ -8,7 +8,7 @@ from app.models.user import User
 
 def test_required_tables_exist():
     tables = set(inspect(engine).get_table_names())
-    assert {"users", "documents", "analysis_results"}.issubset(tables)
+    assert {"users", "documents", "analysis_results", "cv_analyses", "quiz_results", "coach_recommendations"}.issubset(tables)
 
 
 def test_user_delete_cascades_to_documents_and_results():
