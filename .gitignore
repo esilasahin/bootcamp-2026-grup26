@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.env
+unimate.db
+test_unimate.db
+uploads/
+.idea/
+.vscode/
+.DS_Store
