@@ -963,8 +963,6 @@ Ortak çalışma günlerinde Google Meet toplantıları gerçekleştirilmiş ve 
 
 Sprintin final sprinti olması nedeniyle entegrasyon sorunları ve blokajlar bekletilmeden takım grubunda paylaşılmıştır.
 
-> Daily Scrum toplantılarına ait ekran görüntüleri bu alana eklenecektir.
-
 ---
 
 ### Sprint Board Update
@@ -987,7 +985,6 @@ Sprint sonunda planlanan görevlerin tamamı “Tamamlandı” durumuna alınmı
 - **Jira Sprint 3 Board:** (Jira bağlantısı eklenecek)
 - **Miro Product Backlog:** (Miro bağlantısı eklenecek)
 
-> Sprint Board ekran görüntüsü bu alana eklenecektir.
 
 ---
 
@@ -1046,7 +1043,10 @@ Tamamlanan temel ürün özellikleri:
 - Loading ve hata durumlarının gösterilmesi
 - Responsive Dashboard tasarımı
 
-> Ürünün final ekran görüntüleri ve kullanıcı akışına ait görseller bu alana eklenecektir.
+<img width="1295" height="684" alt="image" src="https://github.com/user-attachments/assets/6f57220b-5195-4cde-a34b-5bd37eba9608" />
+<img width="1295" height="682" alt="image" src="https://github.com/user-attachments/assets/552d67ad-c356-4612-b304-4c8078b30950" />
+<img width="1286" height="613" alt="image" src="https://github.com/user-attachments/assets/ed1202ec-fb4d-4354-9e77-2513efa4b62c" />
+
 
 ---
 
