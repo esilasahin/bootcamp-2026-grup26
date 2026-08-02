@@ -967,30 +967,28 @@ Sprintin final sprinti olması nedeniyle entegrasyon sorunları ve blokajlar bek
 
 ### Sprint Board Update
 
-Sprint 3 görevleri Jira üzerinde oluşturulmuş ve takım üyelerinin teknik sorumluluklarına göre dağıtılmıştır.
+Sprint 3 görevleri oluşturulmuş ve takım üyelerinin teknik sorumluluklarına göre dağıtılmıştır.
 
-Sprint kapsamında toplam beş ana geliştirme paketi ve **15 Story Point** planlanmıştır. Görevler sprint boyunca aşağıdaki durumlara göre takip edilmiştir:
+Sprint kapsamında toplam beş ana geliştirme paketi ve **15 Story Point** planlanmıştır. 
 
+### Sprint Board Bağlantısı
+
+*(Sprint 3 Pano Görseli)*
+<img width="1852" height="875" alt="Sprint 3 Board" src="https://github.com/user-attachments/assets/29e94c69-3686-4a6a-a27f-82741a16f6b8" />
+
+Panoda görevler aşağıdaki durumlara göre takip edilmiştir:
 - Yapılacaklar
 - Devam Ediyor
 - Kod İncelemesinde
 - Tamamlandı
 
-Sprint sonunda planlanan görevlerin tamamı “Tamamlandı” durumuna alınmış ve Sprint 3 Board kapatılmıştır.
-
----
-
-### Sprint Board Bağlantısı
-
-- **Jira Sprint 3 Board:** (Jira bağlantısı eklenecek)
-- **Miro Product Backlog:** (Miro bağlantısı eklenecek)
-
-
 ---
 
 ### Sprint Sonunda Durum
 
-Sprint 3 sonunda UniMate AI uygulamasının temel kullanıcı akışı uçtan uca tamamlanmıştır.
+Sprint sonunda planlanan görevlerin tamamı “Tamamlandı” durumuna alınmış ve Sprint 3 Board kapatılmıştır.
+
+UniMate AI uygulamasının temel kullanıcı akışı uçtan uca tamamlanmıştır.
 
 Tamamlanan sistem akışı aşağıdaki gibidir:
 
