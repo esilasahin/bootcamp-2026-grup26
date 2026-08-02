@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LoadingState } from "./components/StateComponents";
 
-const SURE_SN = 60;
+const SURE_SN = 7 * 24 * 60 * 60;
 
 const HAVUZ = {
   academic: [
@@ -18,75 +18,174 @@ const HAVUZ = {
   ],
 };
 
-function DeadlineRing({ oran, tamam, doldu }) {
-  const r = 15;
-  const cevre = 2 * Math.PI * r;
-  const gosterilen = tamam ? 1 : oran;
-  const offset = cevre * (1 - gosterilen);
+function createGoals(coach) {
+  return (coach?.hedefler || []).map((hedef, index) => ({
+    id: index + 1,
+    tip: hedef.tip,
+    metin: hedef.metin,
+    baslangicTick: 0,
+    tamam: false,
+    doldu: false,
+  }));
+}
 
-  let renk = "#3b82f6";
-  if (tamam) renk = "#16a34a";
-  else if (doldu || oran > 0.85) renk = "#ef4444";
-  else if (oran > 0.6) renk = "#f59e0b";
+function DeadlineRing({ oran, tamam, doldu }) {
+  const radius = 15;
+  const circumference = 2 * Math.PI * radius;
+  const displayedRatio = tamam ? 1 : oran;
+  const offset = circumference * (1 - displayedRatio);
+
+  let color = "#3b82f6";
+
+  if (tamam) {
+    color = "#16a34a";
+  } else if (doldu || oran > 0.85) {
+    color = "#ef4444";
+  } else if (oran > 0.6) {
+    color = "#f59e0b";
+  }
 
   return (
     <svg className="coach-ring" viewBox="0 0 36 36">
-      <circle cx="18" cy="18" r={r} className="coach-ring-bg" />
       <circle
         cx="18"
         cy="18"
-        r={r}
+        r={radius}
+        className="coach-ring-bg"
+      />
+
+      <circle
+        cx="18"
+        cy="18"
+        r={radius}
         className="coach-ring-fg"
-        stroke={renk}
-        strokeDasharray={cevre}
+        stroke={color}
+        strokeDasharray={circumference}
         strokeDashoffset={offset}
       />
-      {tamam && <path d="M13 18 l3.5 3.5 l7 -7.5" className="coach-ring-check" />}
+
+      {tamam && (
+        <path
+          d="M13 18 l3.5 3.5 l7 -7.5"
+          className="coach-ring-check"
+        />
+      )}
     </svg>
   );
 }
 
-export default function CoachCard({ coach, yukleniyor, onYenile }) {
+export default function CoachCard({
+  coach,
+  yukleniyor,
+  onYenile,
+}) {
   const [hedefler, setHedefler] = useState(() =>
-    (coach?.hedefler || []).map((h, i) => ({
-      id: i + 1,
-      tip: h.tip,
-      metin: h.metin,
-      baslangicTick: 0,
-      tamam: false,
-      doldu: false,
-    }))
+    createGoals(coach),
   );
+
   const [tick, setTick] = useState(0);
+  const [tamamlananHedefSayisi, setTamamlananHedefSayisi] =
+    useState(0);
+
   const tickRef = useRef(0);
-  const havuzRef = useRef({ academic: 0, career: 0 });
+  const havuzRef = useRef({
+    academic: 0,
+    career: 0,
+  });
+
+  const toplamHedefSayisi =
+    coach?.hedefler?.length || hedefler.length;
+
+  const haftalikIlerleme =
+    toplamHedefSayisi > 0
+      ? Math.min(
+          100,
+          Math.round(
+            (tamamlananHedefSayisi /
+              toplamHedefSayisi) *
+              100,
+          ),
+        )
+      : 0;
 
   useEffect(() => {
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
       tickRef.current += 1;
       setTick(tickRef.current);
-      setHedefler((prev) =>
-        prev.map((h) =>
-          !h.tamam && !h.doldu && tickRef.current - h.baslangicTick >= SURE_SN
-            ? { ...h, doldu: true }
-            : h
-        )
+
+      setHedefler((previousGoals) =>
+        previousGoals.map((hedef) => {
+          const timeExpired =
+            tickRef.current - hedef.baslangicTick >=
+            SURE_SN;
+
+          if (
+            !hedef.tamam &&
+            !hedef.doldu &&
+            timeExpired
+          ) {
+            return {
+              ...hedef,
+              doldu: true,
+            };
+          }
+
+          return hedef;
+        }),
       );
     }, 1000);
-    return () => clearInterval(t);
+
+    return () => clearInterval(timer);
   }, []);
 
   const tamamla = (id) => {
-    setHedefler((prev) => prev.map((h) => (h.id === id ? { ...h, tamam: true } : h)));
+    const hedef = hedefler.find(
+      (item) => item.id === id,
+    );
+
+    if (!hedef || hedef.tamam) {
+      return;
+    }
+
+    setHedefler((previousGoals) =>
+      previousGoals.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              tamam: true,
+            }
+          : item,
+      ),
+    );
+
+    setTamamlananHedefSayisi((previousCount) =>
+      Math.min(
+        previousCount + 1,
+        toplamHedefSayisi,
+      ),
+    );
+
     setTimeout(() => {
-      setHedefler((prev) =>
-        prev.map((h) => {
-          if (h.id !== id) return h;
-          const havuz = HAVUZ[h.tip];
-          const idx = havuzRef.current[h.tip] % havuz.length;
-          havuzRef.current[h.tip] += 1;
-          return { ...h, metin: havuz[idx], baslangicTick: tickRef.current, tamam: false, doldu: false };
-        })
+      setHedefler((previousGoals) =>
+        previousGoals.map((item) => {
+          if (item.id !== id) {
+            return item;
+          }
+
+          const pool = HAVUZ[item.tip];
+          const poolIndex =
+            havuzRef.current[item.tip] % pool.length;
+
+          havuzRef.current[item.tip] += 1;
+
+          return {
+            ...item,
+            metin: pool[poolIndex],
+            baslangicTick: tickRef.current,
+            tamam: false,
+            doldu: false,
+          };
+        }),
       );
     }, 1600);
   };
@@ -94,10 +193,22 @@ export default function CoachCard({ coach, yukleniyor, onYenile }) {
   return (
     <div className="glass-card coach-card">
       <div className="coach-card-head">
-        <h3 className="section-title" style={{ margin: 0 }}>Haftalık Koçluk Önerisi</h3>
+        <h3
+          className="section-title"
+          style={{ margin: 0 }}
+        >
+          Haftalık Koçluk Önerisi
+        </h3>
+
         {onYenile && (
-          <button className="coach-refresh" onClick={onYenile} disabled={yukleniyor}>
-            {yukleniyor ? "Güncelleniyor..." : "Yenile"}
+          <button
+            className="coach-refresh"
+            onClick={onYenile}
+            disabled={yukleniyor}
+          >
+            {yukleniyor
+              ? "Güncelleniyor..."
+              : "Yenile"}
           </button>
         )}
       </div>
@@ -107,44 +218,102 @@ export default function CoachCard({ coach, yukleniyor, onYenile }) {
       ) : (
         coach && (
           <>
-            <p className="coach-message">"{coach.mesaj}"</p>
+            <p className="coach-message">
+              "{coach.mesaj}"
+            </p>
 
-            {typeof coach.haftalikIlerleme === "number" && (
-              <div className="coach-progress">
-                <div className="coach-progress-label">
-                  <span>Haftalık İlerleme</span>
-                  <strong>%{coach.haftalikIlerleme}</strong>
-                </div>
-                <div className="quiz-progress-bar">
-                  <div className="quiz-progress-fill" style={{ width: `${coach.haftalikIlerleme}%` }} />
-                </div>
+            <div className="coach-progress">
+              <div className="coach-progress-label">
+                <span>Haftalık İlerleme</span>
+                <strong>%{haftalikIlerleme}</strong>
               </div>
-            )}
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "20px" }}>
-              {hedefler.map((h) => {
-                const oran = Math.min(1, (tick - h.baslangicTick) / SURE_SN);
+              <div className="quiz-progress-bar">
+                <div
+                  className="quiz-progress-fill"
+                  style={{
+                    width: `${haftalikIlerleme}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                marginTop: "20px",
+              }}
+            >
+              {hedefler.map((hedef) => {
+                const ratio = Math.min(
+                  1,
+                  (tick - hedef.baslangicTick) /
+                    SURE_SN,
+                );
+
+                const className = [
+                  "coach-goal",
+                  hedef.tip,
+                  hedef.tamam ? "tamam" : "",
+                  hedef.doldu ? "doldu" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+
                 return (
-                  <div key={h.id} className={`coach-goal ${h.tip} ${h.tamam ? "tamam" : ""} ${h.doldu ? "doldu" : ""}`}>
+                  <div
+                    key={hedef.id}
+                    className={className}
+                  >
                     <button
+                      type="button"
                       className="coach-check"
-                      onClick={() => tamamla(h.id)}
-                      disabled={h.tamam}
-                      aria-label="Tamamlandı olarak işaretle"
+                      onClick={() =>
+                        tamamla(hedef.id)
+                      }
+                      disabled={hedef.tamam}
+                      aria-label={
+                        "Tamamlandı olarak işaretle"
+                      }
                     >
-                      {h.tamam && <span className="coach-check-mark" />}
+                      {hedef.tamam && (
+                        <span className="coach-check-mark" />
+                      )}
                     </button>
 
                     <div className="coach-goal-body">
                       <strong className="coach-goal-title">
-                        {h.tip === "academic" ? "Akademik Hedef" : "Kariyer Hedefi"}
+                        {hedef.tip === "academic"
+                          ? "Akademik Hedef"
+                          : "Kariyer Hedefi"}
                       </strong>
-                      <span className="coach-goal-text">{h.metin}</span>
-                      {h.tamam && <span className="coach-goal-ok">Tamamlandı · yeni konu getiriliyor...</span>}
-                      {h.doldu && !h.tamam && <span className="coach-goal-uyari">Süre doldu · Tamamlanmadı</span>}
+
+                      <span className="coach-goal-text">
+                        {hedef.metin}
+                      </span>
+
+                      {hedef.tamam && (
+                        <span className="coach-goal-ok">
+                          Tamamlandı · yeni konu
+                          getiriliyor...
+                        </span>
+                      )}
+
+                      {hedef.doldu &&
+                        !hedef.tamam && (
+                          <span className="coach-goal-uyari">
+                            Süre doldu · Tamamlanmadı
+                          </span>
+                        )}
                     </div>
 
-                    <DeadlineRing oran={oran} tamam={h.tamam} doldu={h.doldu} />
+                    <DeadlineRing
+                      oran={ratio}
+                      tamam={hedef.tamam}
+                      doldu={hedef.doldu}
+                    />
                   </div>
                 );
               })}

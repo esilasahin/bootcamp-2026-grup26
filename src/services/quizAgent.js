@@ -1,18 +1,34 @@
 import { apiRequest } from "./api";
 
 export async function generateQuiz(params = {}) {
-  // buraya quiz üretimi backend endpoint'i bağlanacak
+  let documentId = params.documentId;
+
   if (params.dosya) {
     const form = new FormData();
     form.append("file", params.dosya);
-    if (params.konu) form.append("konu", params.konu);
-    form.append("soruSayisi", String(params.soruSayisi ?? 3));
-    return apiRequest("/api/quiz/generate", { method: "POST", body: form, isForm: true });
+    const uploadResponse = await apiRequest("/api/v1/ocr/upload", {
+      method: "POST",
+      body: form,
+      isForm: true,
+    });
+    documentId = uploadResponse.data?.documentId;
   }
-  return apiRequest("/api/quiz/generate", { method: "POST", body: params });
+
+  const response = await apiRequest("/api/v1/study/quizzes/generate", {
+    method: "POST",
+    body: {
+      topic: params.konu || undefined,
+      documentId: documentId || undefined,
+      questionCount: params.soruSayisi ?? 3,
+    },
+  });
+  return response.data;
 }
 
 export async function submitQuiz(quizId, answers) {
-  // buraya quiz sonucu kaydı backend endpoint'i bağlanacak
-  return apiRequest("/api/quiz/submit", { method: "POST", body: { quizId, answers } });
+  const response = await apiRequest("/api/v1/study/quizzes/submit", {
+    method: "POST",
+    body: { quizId, answers },
+  });
+  return response.data;
 }

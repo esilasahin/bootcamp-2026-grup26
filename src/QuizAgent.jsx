@@ -264,7 +264,10 @@ export default function QuizAgent({ studyResult, konular = [], onQuizComplete })
 
           <div className="quiz-review">
             {quiz.questions.map((q, i) => {
-              const dogru = cevaplar[i] === q.correctIndex;
+              const reviewItem = sonuc.review?.find(
+                (item) => item.questionId === q.id,
+              );
+              const dogru = Boolean(reviewItem?.isCorrect);
               return (
                 <div key={q.id} className={`quiz-review-item ${dogru ? "correct" : "wrong"}`}>
                   <div className="quiz-review-head">
@@ -273,7 +276,8 @@ export default function QuizAgent({ studyResult, konular = [], onQuizComplete })
                   </div>
                   {!dogru && (
                     <p className="quiz-review-explain">
-                      Doğru cevap: <strong>{q.options[q.correctIndex]}</strong> — {q.explanation}
+                      Doğru cevap: <strong>{q.options[reviewItem?.correctIndex]}</strong>
+                      {reviewItem?.explanation && ` — ${reviewItem.explanation}`}
                     </p>
                   )}
                 </div>

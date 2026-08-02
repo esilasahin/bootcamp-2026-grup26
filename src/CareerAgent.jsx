@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { analyzeCV } from "./services/careerAgent";
+import { analyzeCV, matchJobs } from "./services/careerAgent";
 import { validateFile } from "./services/api";
 import { LoadingState, ErrorState } from "./components/StateComponents";
 
@@ -10,6 +10,11 @@ export default function CareerAgent({ onAnalysisComplete }) {
   const [hataMesaji, setHataMesaji] = useState("");
   const [analizSonucu, setAnalizSonucu] = useState(null);
   const [suruklemeAktif, setSuruklemeAktif] = useState(false);
+  const [isBasligi, setIsBasligi] = useState("");
+  const [isAciklamasi, setIsAciklamasi] = useState("");
+  const [eslesmeSonucu, setEslesmeSonucu] = useState(null);
+  const [eslesmeYukleniyor, setEslesmeYukleniyor] = useState(false);
+  const [eslesmeHatasi, setEslesmeHatasi] = useState("");
 
   const dosyaGirdisiRef = useRef(null);
   const dosyaSeciciyiAc = () => dosyaGirdisiRef.current.click();
@@ -18,7 +23,7 @@ export default function CareerAgent({ onAnalysisComplete }) {
     setHataMesaji("");
     if (!dosya) return;
 
-    const hata = validateFile(dosya, { allowed: ["pdf", "doc", "docx"], maxMB: 5 });
+    const hata = validateFile(dosya, { allowed: ["pdf", "docx", "txt"], maxMB: 5 });
     if (hata) {
       setHataMesaji(hata);
       return;
@@ -51,6 +56,31 @@ export default function CareerAgent({ onAnalysisComplete }) {
     setSecilenDosyaAdi("");
     setHataMesaji("");
     setAnalizSonucu(null);
+    setIsBasligi("");
+    setIsAciklamasi("");
+    setEslesmeSonucu(null);
+    setEslesmeHatasi("");
+  };
+
+  const isIlaniEsle = async () => {
+    if (!analizSonucu?.id || isBasligi.trim().length < 2 || isAciklamasi.trim().length < 20) {
+      setEslesmeHatasi("İş başlığı ve en az 20 karakterlik ilan açıklaması girilmelidir.");
+      return;
+    }
+    setEslesmeHatasi("");
+    setEslesmeYukleniyor(true);
+    try {
+      const sonuc = await matchJobs({
+        analysisId: analizSonucu.id,
+        jobTitle: isBasligi.trim(),
+        jobDescription: isAciklamasi.trim(),
+      });
+      setEslesmeSonucu(sonuc);
+    } catch (error) {
+      setEslesmeHatasi(error.message);
+    } finally {
+      setEslesmeYukleniyor(false);
+    }
   };
 
   return (
@@ -75,11 +105,11 @@ export default function CareerAgent({ onAnalysisComplete }) {
               type="file"
               ref={dosyaGirdisiRef}
               onChange={dosyaSecildi}
-              accept=".pdf, .doc, .docx"
+              accept=".pdf, .docx, .txt"
               style={{ display: "none" }}
             />
             <h4 className="upload-title">CV yüklemek için buraya tıkla veya sürükle</h4>
-            <p className="upload-desc">Desteklenen Dosyalar: PDF, DOC, DOCX (Maks: 5MB)</p>
+            <p className="upload-desc">Desteklenen Dosyalar: PDF, DOCX, TXT (Maks: 5MB)</p>
           </div>
         )}
 
@@ -157,6 +187,63 @@ export default function CareerAgent({ onAnalysisComplete }) {
                 <ul className="result-list">
                   {analizSonucu.recommendations?.map((rec, i) => <li key={i}>{rec}</li>)}
                 </ul>
+              </div>
+            </div>
+
+            <div className="result-card" style={{ marginTop: "20px" }}>
+              <div className="result-header">İş İlanı Eşleştirme</div>
+              <div className="result-body">
+                <p className="result-text">
+                  CV analizini hedeflediğin iş ilanıyla karşılaştır.
+                </p>
+                <input
+                  className="quiz-topic-input"
+                  value={isBasligi}
+                  onChange={(event) => setIsBasligi(event.target.value)}
+                  placeholder="Örn. Backend Developer"
+                />
+                <textarea
+                  className="quiz-topic-input"
+                  style={{ marginTop: "12px", minHeight: "130px", resize: "vertical" }}
+                  value={isAciklamasi}
+                  onChange={(event) => setIsAciklamasi(event.target.value)}
+                  placeholder="İş ilanı açıklamasını buraya yapıştır..."
+                />
+                {eslesmeHatasi && (
+                  <p style={{ color: "#b91c1c", marginTop: "12px" }}>{eslesmeHatasi}</p>
+                )}
+                <button
+                  type="button"
+                  className="btn-primary"
+                  style={{ marginTop: "16px" }}
+                  onClick={isIlaniEsle}
+                  disabled={eslesmeYukleniyor}
+                >
+                  {eslesmeYukleniyor ? "Eşleştiriliyor..." : "İlanla Eşleştir"}
+                </button>
+
+                {eslesmeSonucu && (
+                  <div style={{ marginTop: "22px" }}>
+                    <div className="score-badge">
+                      Eşleşme: %{eslesmeSonucu.matchScore}
+                    </div>
+                    <h4 className="result-section-title">Eşleşen Beceriler</h4>
+                    <div className="skill-chips">
+                      {eslesmeSonucu.matchedSkills?.map((skill) => (
+                        <span key={skill} className="skill-chip">{skill}</span>
+                      ))}
+                    </div>
+                    <h4 className="result-section-title">Eksik Beceriler</h4>
+                    <div className="skill-chips">
+                      {eslesmeSonucu.missingSkills?.map((skill) => (
+                        <span key={skill} className="skill-chip soft">{skill}</span>
+                      ))}
+                    </div>
+                    <p className="result-text" style={{ marginTop: "18px" }}>
+                      {eslesmeSonucu.recommendation}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

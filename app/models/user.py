@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.cv_analysis import CVAnalysis
     from app.models.document import Document
     from app.models.quiz_result import QuizResult
+    from app.models.study_quiz import StudyQuiz
 
 
 class User(Base):
@@ -35,4 +36,9 @@ class User(Base):
     )
     cv_analyses: Mapped[list["CVAnalysis"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     quiz_results: Mapped[list["QuizResult"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    study_quizzes: Mapped[list["StudyQuiz"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     coach_recommendations: Mapped[list["CoachRecommendation"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
