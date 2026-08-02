@@ -516,41 +516,905 @@ Backend Authentication, PostgreSQL veritabanı, OCR, Study Agent ve frontend bel
 - Career Agent, Coach Agent, Quiz ve Flashcard temel sistem tamamlandıktan sonra ele alınacaktır.
 - Sprint sonunda README, Jira ve GitHub durumları birlikte kontrol edilecektir.
 
-## Sprint 3 Hedefleri
+## Sprint 3
 
-Sprint 3 kapsamında aşağıdaki çalışmaların gerçekleştirilmesi hedeflenmektedir:
+### Projeyi Yerel Ortamda Çalıştırma
 
-- Sprint 2'den kalan geliştirmelerin tamamlanması
-- Frontend ve backend entegrasyonunun kurulması
-- Geçici authentication sisteminden gerçek JWT authentication sistemine geçilmesi
-- Register endpointinin frontend'e bağlanması
-- Login endpointinin frontend'e bağlanması
-- Backend hata mesajlarının frontend'de gösterilmesi
-- PDF ve görsel yükleme akışının tamamlanması
-- Dosya türü ve boyutu kontrollerinin tamamlanması
-- OCR sonucunun Study Agent servisine gönderilmesi
-- Study Agent özet sonucunun frontend üzerinde gösterilmesi
-- Özet sonuçlarının veritabanına kaydedilmesi
-- Kullanıcıya ait geçmiş analiz sonuçlarının gösterilmesi
-- Career Agent geliştirilmesi
-- CV analizi özelliğinin hazırlanması
-- Coach Agent geliştirilmesi
-- Quiz özelliğinin geliştirilmesi
-- Gerekli görülürse Flashcard özelliğinin eklenmesi
-- Dashboard iyileştirmelerinin yapılması
-- Loading ve hata durumlarının tamamlanması
-- Uçtan uca sistem testlerinin yapılması
-- Responsive tasarım kontrollerinin yapılması
-- Hataların giderilmesi
-- README ve sprint dokümantasyonunun tamamlanması
-- Pull Request ve merge süreçlerinin tamamlanması
-- Üç dakikalık demo videosunun hazırlanması
-- Final sunumunun hazırlanması
+Bu bölüm, projeyi ilk kez bilgisayarına alan bir geliştiricinin backend, frontend, veritabanı, OCR ve Gemini özelliklerini yerel ortamda çalıştırabilmesi için hazırlanmıştır.
 
-## Proje Durumu
+#### Gereksinimler
 
-🟢 **Sprint 1 Tamamlandı**
+- Git
+- Python **3.12** (önerilen sürüm: 3.12.10 veya uyumlu bir 3.12 sürümü)
+- Node.js **20.19+**, **22.12+** veya daha güncel bir LTS sürümü
+- npm
+- Tesseract OCR 5.x
+- Taranmış PDF desteği için Poppler
+- PostgreSQL kullanılacaksa Docker Desktop ve Docker Compose
+- Gemini kullanılacaksa Google AI Studio üzerinden oluşturulmuş bir Gemini API anahtarı
 
-✅️ **Sprint 2 Tamamlandı**
+> Proje geliştirme ortamında SQLite ile Docker kullanmadan da çalıştırılabilir. PostgreSQL, Docker Compose ile isteğe bağlı olarak başlatılabilir.
 
-⚪ **Sprint 3 Planlanıyor**
+#### 1. Projeyi Klonlama
+
+```bash
+git clone https://github.com/esilasahin/bootcamp-2026-grup26.git
+cd bootcamp-2026-grup26
+```
+
+Doğru branch üzerinde olduğunuzu kontrol edin:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+#### 2. Python Sanal Ortamını Hazırlama
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+macOS/Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Aktif Python yorumlayıcısını doğrulayın:
+
+```bash
+python -c "import sys; print(sys.executable)"
+python -m pip check
+```
+
+#### 3. Frontend Bağımlılıklarını Kurma
+
+Proje kök dizininde:
+
+```bash
+npm install
+```
+
+> Frontend proje kök dizinindeki `package.json`, `src/` ve `vite.config.js` dosyalarını kullanır. Ayrı bir `frontend/` klasörüne geçilmesi gerekmez.
+
+#### 4. Environment Değişkenlerini Hazırlama
+
+`.env.example` dosyasını `.env` adıyla kopyalayın.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+macOS/Linux:
+
+```bash
+cp .env.example .env
+```
+
+`.env` dosyasını gerçek değerlerinize göre düzenleyin. `.env` dosyası Git tarafından takip edilmez ve API anahtarı/JWT anahtarı kesinlikle GitHub'a gönderilmemelidir.
+
+##### Hızlı Başlangıç: SQLite + Yerel Özetleyici
+
+Harici veritabanı ve Gemini anahtarı olmadan temel sistemi çalıştırmak için:
+
+```env
+DATABASE_URL=sqlite+pysqlite:///./unimate.db
+JWT_SECRET_KEY=yerel-gelistirme-icin-en-az-32-karakterlik-guvenli-anahtar
+LLM_PROVIDER=local
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.6-flash
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+##### Tam Yapay Zekâ Akışı: Gemini
+
+Gemini ile ders özeti ve yapay zekâ destekli quiz üretimi için:
+
+```env
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=BURAYA_KENDI_GEMINI_API_ANAHTARINIZ
+GEMINI_MODEL=gemini-3.6-flash
+LLM_TIMEOUT_SECONDS=30
+LLM_MAX_INPUT_CHARS=50000
+```
+
+Gemini API anahtarı Google AI Studio üzerinden oluşturulmalıdır. Anahtarın geçerli kullanıcı kotası ve seçilen modele erişimi bulunmalıdır.
+
+##### PostgreSQL Kullanımı
+
+PostgreSQL kullanmak için `.env` içinde:
+
+```env
+DATABASE_URL=postgresql+psycopg://unimate:unimate_password@localhost:5432/unimate
+```
+
+Ardından veritabanını başlatın:
+
+```bash
+docker compose up -d db
+docker compose ps
+```
+
+PostgreSQL yerine SQLite kullanıyorsanız bu Docker komutlarını çalıştırmanız gerekmez.
+
+#### 5. OCR Sistem Bağımlılıklarını Kurma
+
+Python paketleri `requirements.txt` ile kurulur; ancak Tesseract ve Poppler işletim sistemi seviyesinde ayrıca yüklenmelidir.
+
+##### Windows
+
+```powershell
+winget install --id UB-Mannheim.TesseractOCR --exact --source winget
+winget install --id oschwartz10612.Poppler --exact --source winget
+```
+
+Kurulumdan sonra VS Code ve terminalleri kapatıp yeniden açın. Ardından:
+
+```powershell
+where.exe tesseract
+where.exe pdftoppm
+```
+
+Tesseract PATH içinde görünmüyorsa `.env` dosyasına şunu ekleyin:
+
+```env
+TESSERACT_CMD=C:/Program Files/Tesseract-OCR/tesseract.exe
+```
+
+Poppler PATH içinde görünmüyorsa `pdftoppm.exe` dosyasının bulunduğu `Library/bin` klasörünü belirtin:
+
+```env
+POPPLER_PATH=C:/Poppler/Library/bin
+```
+
+Türkçe OCR dil dosyasını doğrulayın:
+
+```powershell
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --list-langs
+```
+
+Çıktıda `tur` bulunmalıdır. Bulunmuyorsa resmi Tesseract `tur.traineddata` dosyasını Tesseract kurulumundaki `tessdata` klasörüne ekleyin.
+
+##### Ubuntu/Debian
+
+```bash
+sudo apt update
+sudo apt install tesseract-ocr tesseract-ocr-tur poppler-utils
+```
+
+##### macOS
+
+```bash
+brew install tesseract tesseract-lang poppler
+```
+
+OCR ayarlarının örnek görünümü:
+
+```env
+OCR_LANGUAGE=tur
+OCR_DPI=300
+TESSERACT_CMD=
+POPPLER_PATH=
+```
+
+Araçlar sistem PATH'i üzerinden bulunabiliyorsa son iki değer boş bırakılabilir.
+
+#### 6. Veritabanı Migration İşlemleri
+
+Sanal ortam aktifken:
+
+```bash
+python -m alembic upgrade head
+python -m alembic check
+```
+
+Projede bulunan migration'lar:
+
+- `0001_initial.py`: Kullanıcı, belge ve temel analiz tabloları
+- `0002_sprint3_models.py`: CV analizi, quiz sonucu ve koç önerisi tabloları
+- `0003_study_quizzes.py`: Yapay zekâ tarafından oluşturulan Study Quiz kayıtları
+
+#### 7. Backend'i Başlatma
+
+```bash
+python -m uvicorn app.main:app --reload
+```
+
+Beklenen adresler:
+
+- API: `http://127.0.0.1:8000`
+- Swagger: `http://127.0.0.1:8000/docs`
+- OpenAPI şeması: `http://127.0.0.1:8000/openapi.json`
+- Health: `http://127.0.0.1:8000/api/v1/health`
+- Database health: `http://127.0.0.1:8000/api/v1/health/database`
+
+Backend terminalini açık bırakın.
+
+#### 8. Frontend'i Başlatma
+
+İkinci bir terminal açın ve proje kök dizininde:
+
+```bash
+npm run dev
+```
+
+Frontend adresi:
+
+```text
+http://localhost:5173
+```
+
+Backend ve frontend aynı anda farklı terminallerde çalışmalıdır.
+
+#### 9. Test ve Build Kontrolleri
+
+Backend testleri:
+
+```bash
+python -m pytest -q
+```
+
+Güncel projede beklenen sonuç:
+
+```text
+29 passed
+```
+
+Frontend production build:
+
+```bash
+npm run build
+```
+
+Ek kontroller:
+
+```bash
+python -m compileall -q app
+python -m pip check
+python -m alembic check
+```
+
+#### 10. Önerilen Manuel Uçtan Uca Test Akışı
+
+1. Yeni kullanıcı kaydı oluşturun.
+2. Giriş yaparak JWT korumalı Dashboard'a erişin.
+3. Study ekranından PDF, JPG veya PNG ders materyali yükleyin.
+4. OCR çıktısının oluştuğunu ve Gemini/yerel sağlayıcının özet ürettiğini doğrulayın.
+5. Özetten 3 soruluk quiz oluşturun, cevaplayın ve puanın Dashboard'a kaydedildiğini kontrol edin.
+6. Career ekranından PDF, DOCX veya TXT CV yükleyin.
+7. CV puanı, teknik beceriler ve önerilerin gösterildiğini doğrulayın.
+8. CV'yi uyumlu, kısmen uyumlu ve uyumsuz iş ilanlarıyla eşleştirin.
+9. Coach ekranından kişiselleştirilmiş hedefleri ve haftalık ilerlemeyi kontrol edin.
+10. Sayfayı yenileyip Dashboard analiz geçmişinin veritabanından geri yüklendiğini doğrulayın.
+11. Logout işleminin token'ı temizlediğini ve Login ekranına yönlendirdiğini kontrol edin.
+
+#### Temel API Endpointleri
+
+| Metot | Endpoint | Açıklama |
+|---|---|---|
+| GET | `/api/v1/health` | Backend durumunu kontrol eder. |
+| GET | `/api/v1/health/database` | Veritabanı bağlantısını kontrol eder. |
+| POST | `/api/v1/auth/register` | Yeni kullanıcı oluşturur. |
+| POST | `/api/v1/auth/login` | JWT access token üretir. |
+| POST | `/api/v1/auth/token` | Swagger OAuth2 girişi için token üretir. |
+| GET | `/api/v1/users/me` | Giriş yapan kullanıcıyı döndürür. |
+| POST | `/api/v1/ocr/upload` | PDF veya görselden metin çıkarır. |
+| POST | `/api/v1/study/summary` | OCR belgesinden özet ve önemli noktalar oluşturur. |
+| POST | `/api/v1/study/quizzes/generate` | Ders metninden yapay zekâ destekli quiz oluşturur. |
+| POST | `/api/v1/study/quizzes/submit` | Quiz cevaplarını backend'de değerlendirir ve kaydeder. |
+| POST | `/api/v1/cv/analyze` | CV dosyasını analiz eder. |
+| POST | `/api/v1/jobs/match` | CV ile iş ilanını eşleştirir. |
+| POST | `/api/v1/coach/recommendations` | Kişiselleştirilmiş koç önerisi oluşturur. |
+| GET | `/api/v1/users/me/analysis-history` | Kullanıcının analiz geçmişini getirir. |
+
+Swagger'daki kilit simgeli endpointler JWT ister. Önce `/api/v1/auth/token` üzerinden giriş yapın veya Login yanıtındaki token'ı `Bearer` olarak kullanın.
+
+#### Güvenlik Notları
+
+- `.env`, `unimate.db`, `uploads/`, `.venv/`, `node_modules/` ve `dist/` Git'e eklenmemelidir.
+- `JWT_SECRET_KEY` en az 32 karakter olmalı ve production ortamında varsayılan değer kullanılmamalıdır.
+- Gemini API anahtarı frontend koduna veya `VITE_` ile başlayan bir değişkene yazılmamalıdır.
+- API anahtarlarını README, ekran görüntüsü, terminal çıktısı veya commit içinde paylaşmayın.
+- Quiz doğru cevapları kullanıcıya üretim aşamasında gönderilmez; değerlendirme backend tarafında yapılır.
+- Kullanıcılar yalnızca kendilerine ait quiz, belge ve analiz kayıtlarına erişebilir.
+
+#### Yaygın Sorunlar
+
+**`No module named uvicorn`**
+
+Sanal ortamı etkinleştirin ve bağımlılıkları kurun:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+**`npm` komutu bulunamadı**
+
+Node.js kurulumundan sonra VS Code ve terminali yeniden başlatın. `node --version` ve `npm --version` ile doğrulayın.
+
+**`ERR_CONNECTION_REFUSED` — `localhost:5173`**
+
+Frontend sunucusu çalışmıyordur. İkinci terminalde `npm run dev` çalıştırın.
+
+**OCR boş sonuç veya Tesseract bulunamadı hatası**
+
+Tesseract yolunu, `tur` dil paketini ve `.env` içindeki `TESSERACT_CMD` değerini kontrol edin.
+
+**Taranmış PDF işlenemiyor**
+
+Poppler kurulumunu ve `POPPLER_PATH` değerini kontrol edin.
+
+**Gemini model/anahtar hatası**
+
+`LLM_PROVIDER=gemini`, `GEMINI_API_KEY` ve `GEMINI_MODEL` değerlerini kontrol edin. Kullanılabilir model erişimi hesaba göre değişebilir; gerekirse erişiminiz olan güncel bir Flash modeli seçin.
+
+**PowerShell sanal ortam aktivasyonu engelleniyor**
+
+Yalnızca mevcut terminal oturumu için:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+**Port zaten kullanımda**
+
+Backend için farklı port kullanabilirsiniz:
+
+```bash
+python -m uvicorn app.main:app --reload --port 8001
+```
+
+Bu durumda frontend `.env` ayarını da güncelleyin:
+
+```env
+VITE_API_URL=http://127.0.0.1:8001
+```
+
+---
+
+### Sprint Notları
+
+Sprint 3 kapsamında UniMate AI projesinin temel MVP akışı tamamlanmış; Sprint 2’de ayrı modüller hâlinde geliştirilen frontend, backend, authentication, dosya işleme, OCR ve Study Agent servisleri birbiriyle entegre edilmiştir.
+
+Bu sprintte geçici authentication yapısı kaldırılarak gerçek JWT authentication sistemine geçilmiş, Register ve Login ekranları backend API’lerine bağlanmıştır. PDF ve görsel yükleme işlemleri tamamlanmış; dosyalardan çıkarılan metinlerin Study Agent servisine iletilmesi ve oluşturulan özetlerin frontend üzerinde gösterilmesi sağlanmıştır.
+
+Kullanıcıların analiz sonuçları veritabanına kaydedilmiş ve geçmiş analizlerin Dashboard üzerinden görüntülenebilmesi sağlanmıştır. Ayrıca Career Agent, CV analizi, Coach Agent ve Quiz özellikleri geliştirilerek uygulamanın akademik ve kariyer destek kapsamı genişletilmiştir.
+
+Sprint sonunda responsive tasarım kontrolleri, loading ve hata durumları, uçtan uca sistem testleri, README düzenlemeleri, Pull Request ve merge işlemleri tamamlanmıştır. Projenin üç dakikalık demo videosu ve final sunumu hazırlanmıştır.
+
+Sprint kapsamındaki görev dağılımı aşağıdaki şekilde gerçekleştirilmiştir:
+
+- **Esila Şahin:** Frontend JWT Authentication entegrasyonu, Login, Register, Protected Route, Dashboard ve kullanıcı oturum yönetimi
+- **Şifanur Karakılçık:** Dosya yükleme arayüzleri, özet sonuç ekranı, analiz geçmişi, loading ve hata durumları
+- **Nurcan Altuğ:** Backend authentication entegrasyonu, PostgreSQL işlemleri, analiz geçmişi ve kullanıcıya özel veri endpointleri
+- **Yüksel Karan:** PDF ve görsel yükleme, dosya kontrolleri, OCR entegrasyonu ve Study Agent’a veri aktarımı
+- **Hüseyin Tutak:** Study Agent entegrasyonu, Career Agent, CV analizi, Coach Agent ve Quiz geliştirmeleri
+
+---
+
+### Sprint İçinde Tamamlanması Tahmin Edilen Puan
+
+**15 Story Point**
+
+---
+
+### Puan Tamamlama Mantığı
+
+UniMate AI Product Backlog’u toplam **63 Story Point** olarak planlanmıştır.
+
+- Sprint 1 tamamlanan: **24 Story Point**
+- Sprint 2 tamamlanan: **24 Story Point**
+- Sprint 3 planlanan: **15 Story Point**
+- Toplam: **63 Story Point**
+
+Sprint 3 görevleri, entegrasyon ve final ürün çalışmalarını kapsayan beş ana geliştirme paketi altında planlanmıştır.
+
+| Görev | Sorumlu | Story Point | Durum |
+|---|---|---:|---|
+| Frontend JWT Authentication ve Dashboard entegrasyonu | Esila Şahin | 3 SP | Tamamlandı |
+| Dosya yükleme, özet sonucu ve analiz geçmişi arayüzleri | Şifanur Karakılçık | 3 SP | Tamamlandı |
+| Backend Authentication, PostgreSQL ve geçmiş analiz API’leri | Nurcan Altuğ | 3 SP | Tamamlandı |
+| Dosya işleme, OCR ve Study Agent entegrasyonu | Yüksel Karan | 3 SP | Tamamlandı |
+| Study Agent, Career Agent, Coach Agent ve Quiz servisleri | Hüseyin Tutak | 3 SP | Tamamlandı |
+| **Toplam** |  | **15 SP** | **Tamamlandı** |
+
+Bir görevin tamamlanmış kabul edilmesi için aşağıdaki kriterler uygulanmıştır:
+
+- İlgili geliştirmenin feature branch üzerinde tamamlanması
+- Geliştirmenin temel kullanım senaryolarıyla test edilmesi
+- Frontend ve backend bağlantılarının kontrol edilmesi
+- Hata ve loading durumlarının test edilmesi
+- Pull Request açılması ve kod kontrolünün yapılması
+- Geliştirmelerin ana proje branch’ine merge edilmesi
+- Jira görev durumunun güncellenmesi
+- README içerisindeki ilgili teknik bölümün güncellenmesi
+
+**Toplam planlanan:** 15 Story Point  
+**Toplam tamamlanan:** 15 Story Point
+
+---
+
+### Daily Scrum
+
+Takım iletişimi ve görev paylaşımı Sprint 3 boyunca WhatsApp üzerinden düzenli olarak sürdürülmüştür.
+
+Ortak çalışma günlerinde Google Meet toplantıları gerçekleştirilmiş ve takım üyeleri aşağıdaki konularda kısa durum güncellemeleri paylaşmıştır:
+
+- Bir önceki görüşmeden sonra tamamlanan çalışmalar
+- Gün içerisinde yapılacak geliştirmeler
+- Frontend ve backend entegrasyon durumları
+- Karşılaşılan teknik sorunlar
+- Diğer takım üyelerinden beklenen geliştirmeler
+- Pull Request ve merge durumları
+- Demo ve final sunumu hazırlıkları
+
+Sprintin final sprinti olması nedeniyle entegrasyon sorunları ve blokajlar bekletilmeden takım grubunda paylaşılmıştır.
+
+> Daily Scrum toplantılarına ait ekran görüntüleri bu alana eklenecektir.
+
+---
+
+### Sprint Board Update
+
+Sprint 3 görevleri Jira üzerinde oluşturulmuş ve takım üyelerinin teknik sorumluluklarına göre dağıtılmıştır.
+
+Sprint kapsamında toplam beş ana geliştirme paketi ve **15 Story Point** planlanmıştır. Görevler sprint boyunca aşağıdaki durumlara göre takip edilmiştir:
+
+- Yapılacaklar
+- Devam Ediyor
+- Kod İncelemesinde
+- Tamamlandı
+
+Sprint sonunda planlanan görevlerin tamamı “Tamamlandı” durumuna alınmış ve Sprint 3 Board kapatılmıştır.
+
+---
+
+### Sprint Board Bağlantısı
+
+- **Jira Sprint 3 Board:** (Jira bağlantısı eklenecek)
+- **Miro Product Backlog:** (Miro bağlantısı eklenecek)
+
+> Sprint Board ekran görüntüsü bu alana eklenecektir.
+
+---
+
+### Sprint Sonunda Durum
+
+Sprint 3 sonunda UniMate AI uygulamasının temel kullanıcı akışı uçtan uca tamamlanmıştır.
+
+Tamamlanan sistem akışı aşağıdaki gibidir:
+
+1. Kullanıcı Register ekranı üzerinden hesap oluşturur.
+2. Kullanıcı bilgileri backend tarafından doğrulanır ve PostgreSQL veritabanına kaydedilir.
+3. Kullanıcı Login ekranı üzerinden giriş yapar.
+4. Başarılı giriş sonucunda backend tarafından JWT access token oluşturulur.
+5. Kullanıcı korumalı Dashboard ekranına yönlendirilir.
+6. Kullanıcı PDF, JPG, JPEG veya PNG formatında belge yükler.
+7. Dosyanın türü ve boyutu backend tarafından kontrol edilir.
+8. PDF içerisindeki metin doğrudan çıkarılır veya gerekli durumlarda OCR işlemi uygulanır.
+9. Görsel dosyalardaki metin Tesseract OCR kullanılarak çıkarılır.
+10. Elde edilen metin Study Agent servisine gönderilir.
+11. Study Agent belge özetini ve önemli noktaları oluşturur.
+12. Oluşturulan sonuç frontend üzerinde kullanıcıya gösterilir.
+13. Belge ve analiz sonucu PostgreSQL veritabanına kaydedilir.
+14. Kullanıcı geçmiş analiz sonuçlarını Dashboard üzerinden görüntüler.
+15. Kullanıcı Career Agent üzerinden CV analizi yapabilir.
+16. Kullanıcı Coach Agent üzerinden çalışma önerileri alabilir.
+17. Ders materyalleri üzerinden Quiz içeriği oluşturulabilir.
+18. Kullanıcı Logout işlemiyle güvenli biçimde oturumunu sonlandırabilir.
+
+Sprint sonunda planlanan **15 Story Point’in tamamı tamamlanmıştır.**
+
+---
+
+### Ürün Durumu
+
+Sprint 3 sonunda UniMate AI, temel MVP özellikleriyle çalışan ve demo edilebilir bir ürün hâline getirilmiştir.
+
+Tamamlanan temel ürün özellikleri:
+
+- Kullanıcı kayıt sistemi
+- JWT tabanlı kullanıcı giriş sistemi
+- Korumalı Dashboard erişimi
+- Kullanıcı oturum kontrolü
+- Logout işlemi
+- PDF ve görsel yükleme
+- Dosya türü kontrolü
+- Dosya boyutu kontrolü
+- PDF dosyalarından metin çıkarma
+- Görsellerden OCR ile metin çıkarma
+- Study Agent ile ders materyali özeti oluşturma
+- Önemli noktaları çıkarma
+- Analiz sonuçlarını veritabanına kaydetme
+- Kullanıcıya ait geçmiş analizleri listeleme
+- Career Agent ile CV analizi
+- Coach Agent ile çalışma önerileri
+- Quiz oluşturma
+- Loading ve hata durumlarının gösterilmesi
+- Responsive Dashboard tasarımı
+
+> Ürünün final ekran görüntüleri ve kullanıcı akışına ait görseller bu alana eklenecektir.
+
+---
+
+### Frontend Authentication ve Dashboard — Esila Şahin
+
+Sprint 3 kapsamında frontend authentication sistemi gerçek backend API’leriyle entegre edilmiş ve geçici authentication yapısı kaldırılmıştır.
+
+#### Tamamlanan Kullanıcı Akışı
+
+- Register formu backend Register endpointine bağlandı.
+- Kullanıcı kayıt bilgileri backend’e gönderildi.
+- Aynı e-posta adresiyle tekrar kayıt olunması durumunda backend hata mesajının frontend’de gösterilmesi sağlandı.
+- Login formu backend Login endpointine bağlandı.
+- Geçici `temporary-demo-token` kullanımı kaldırıldı.
+- Başarılı giriş sonucunda alınan JWT access token frontend oturum yönetimine eklendi.
+- Token gerektiren API isteklerine Authorization header eklendi.
+- Kullanıcının oturum durumu `/api/v1/users/me` endpointi üzerinden doğrulandı.
+- Protected Route yapısı gerçek JWT sistemiyle uyumlu hâle getirildi.
+- Token bulunmayan kullanıcıların Dashboard ekranına erişimi engellendi.
+- Geçersiz veya süresi dolmuş token durumları yönetildi.
+- Backend’den gelen authentication hata mesajları frontend üzerinde gösterildi.
+- Başarılı giriş sonrasında Dashboard yönlendirmesi tamamlandı.
+- Logout sırasında JWT token’ın silinmesi sağlandı.
+- Logout sonrasında kullanıcı Login ekranına yönlendirildi.
+- Dashboard kullanıcı bilgileri gerçek backend verileriyle gösterildi.
+- Dashboard navigasyon ve responsive tasarım kontrolleri tamamlandı.
+- Frontend lint ve production build testleri gerçekleştirildi.
+
+**Çalışma Durumu:** 🟢 Tamamlandı.
+
+---
+
+### Frontend Belge Arayüzleri — Şifanur Karakılçık
+
+Bu görev kapsamında Sprint 2’de hazırlanan dosya yükleme ve sonuç arayüzleri gerçek backend API’leriyle entegre edilmiştir.
+
+#### Tamamlanan Çalışmalar
+
+- PDF ve görsel yükleme alanı gerçek backend endpointine bağlandı.
+- PDF, JPG, JPEG ve PNG formatları için frontend dosya kontrolü tamamlandı.
+- Maksimum dosya boyutu kontrolü eklendi.
+- Desteklenmeyen dosya türlerinde kullanıcıya anlaşılır hata mesajı gösterildi.
+- Dosya boyutu sınırını aşan yüklemeler engellendi.
+- Dosya yükleme sırasında loading göstergesi eklendi.
+- OCR işlemi sırasında kullanıcıya işlem durumu gösterildi.
+- Study Agent özet üretimi sırasında bekleme durumu eklendi.
+- Backend bağlantı hataları için hata yönetimi tamamlandı.
+- Yetkisiz isteklerde kullanıcı oturumunun kontrol edilmesi sağlandı.
+- OCR sonucunun Study Agent servisine gönderildiği kullanıcı akışı tamamlandı.
+- Study Agent tarafından oluşturulan özet sonuç kartı geliştirildi.
+- Önemli noktaların ayrı bir bölümde gösterilmesi sağlandı.
+- Kullanıcıya ait geçmiş analiz sonuçları Dashboard üzerinde listelendi.
+- Geçmiş analiz kartlarında belge adı ve analiz bilgileri gösterildi.
+- Boş veri durumları için bilgilendirici arayüzler eklendi.
+- Başarılı ve başarısız işlemler için kullanıcı bildirimleri tamamlandı.
+- Dashboard ve belge arayüzlerinin responsive kontrolleri yapıldı.
+- Ortak tasarım dili tüm ilgili ekranlarda korundu.
+
+#### Çalışma Durumu
+
+🟢 **Tamamlandı.** Dosya yükleme, OCR, özet üretimi ve geçmiş analizlerin gösterilmesi gerçek backend verileriyle çalışır hâle getirilmiştir.
+
+---
+
+### Sprint 3 Story Point Durumu
+
+| Geliştirici | Puan | Durum |
+|---|---:|---|
+| Esila Şahin | 3 SP | Tamamlandı |
+| Şifanur Karakılçık | 3 SP | Tamamlandı |
+| Nurcan Altuğ | 3 SP | Tamamlandı |
+| Yüksel Karan | 3 SP | Tamamlandı |
+| Hüseyin Tutak | 3 SP | Tamamlandı |
+| **Toplam** | **15 SP** | **Tamamlandı** |
+
+Sprint 3 kapsamında planlanan **15 Story Point’in tamamı başarıyla tamamlanmıştır.**
+
+---
+
+### Kullanılan Teknolojiler
+
+Sprint 3 kapsamında aşağıdaki teknolojiler kullanılmıştır:
+
+#### Frontend
+
+- React 19
+- Vite
+- React Router
+- JavaScript
+- Fetch API
+- CSS3
+- ESLint
+- Responsive Web Design
+
+#### Backend
+
+- Python
+- FastAPI
+- Pydantic
+- SQLAlchemy
+- Alembic
+- Uvicorn
+- JWT Authentication
+- Argon2 parola hashleme
+- CORS Middleware
+
+#### Veritabanı
+
+- PostgreSQL
+- Docker
+- Docker Compose
+
+#### Dosya İşleme ve OCR
+
+- Tesseract OCR
+- pdfplumber
+- pdf2image
+- Pillow
+- UUID tabanlı geçici dosya yönetimi
+
+#### Yapay Zekâ ve Agent Altyapısı
+
+- Google Gemini (`google-genai`)
+- `gemini-3.6-flash` modeli
+- Study Agent
+- Career Agent
+- Coach Agent
+- Gemini destekli Study Quiz üretimi
+- BaseLLMProvider
+- LocalSummaryProvider (API anahtarı gerektirmeyen geliştirme alternatifi)
+- Prompt tabanlı analiz sistemi
+- Chunking
+- Yapılandırılmış JSON çıktıları
+
+#### Proje Yönetimi ve İş Birliği
+
+- Jira
+- Miro
+- GitHub
+- Git
+- WhatsApp
+- Google Meet
+
+---
+
+### Backend Authentication ve PostgreSQL — Nurcan Altuğ
+
+Bu görev kapsamında Sprint 2’de geliştirilen backend authentication ve PostgreSQL altyapısı frontend ile entegre edilmiş; kullanıcıya özel belge ve analiz işlemleri tamamlanmıştır.
+
+#### Tamamlanan Çalışmalar
+
+- Register endpointi frontend ile entegre edildi.
+- Login endpointi frontend ile entegre edildi.
+- JWT access token üretme ve doğrulama işlemleri test edildi.
+- Protected endpointlerde kullanıcı doğrulaması tamamlandı.
+- `/api/v1/users/me` endpointi frontend kullanıcı oturumu için kullanıldı.
+- Authentication hata response yapıları frontend ile uyumlu hâle getirildi.
+- Aynı e-posta adresiyle kayıt kontrolü doğrulandı.
+- Hatalı kullanıcı bilgileri için anlaşılır hata mesajları düzenlendi.
+- Geçersiz ve süresi dolmuş token senaryoları yönetildi.
+- Document kayıtlarının kullanıcıyla ilişkilendirilmesi sağlandı.
+- AnalysisResult kayıtlarının belge ve kullanıcıyla ilişkilendirilmesi tamamlandı.
+- Study Agent analiz sonuçlarının PostgreSQL veritabanına kaydedilmesi sağlandı.
+- Kullanıcının yalnızca kendi analiz sonuçlarına erişebilmesi sağlandı.
+- Geçmiş analiz sonuçlarını listeleyen endpoint hazırlandı.
+- Tekil analiz sonucunu görüntülemeye yönelik backend işlemleri tamamlandı.
+- Veritabanı session ve hata yönetimi iyileştirildi.
+- Gerekli migration kontrolleri gerçekleştirildi.
+- CORS ayarları frontend bağlantısına uygun şekilde güncellendi.
+- Health ve database health endpointleri test edildi.
+- API response modelleri frontend ihtiyaçlarına göre standartlaştırıldı.
+- Backend testleri ve manuel entegrasyon kontrolleri gerçekleştirildi.
+
+#### Hazırlanan Temel API Endpointleri
+
+| Metot | Endpoint | Açıklama |
+|---|---|---|
+| POST | `/api/v1/auth/register` | Yeni kullanıcı kaydı oluşturur. |
+| POST | `/api/v1/auth/login` | Kullanıcıyı doğrular ve JWT access token döndürür. |
+| POST | `/api/v1/auth/token` | OAuth2 ve Swagger girişi için token oluşturur. |
+| GET | `/api/v1/users/me` | Giriş yapan kullanıcının bilgilerini döndürür. |
+| GET | `/api/v1/users/me/analysis-history` | Kullanıcıya ait geçmiş CV, Study, quiz ve koç analizlerini listeler. |
+| GET | `/api/v1/health` | Backend servis durumunu kontrol eder. |
+| GET | `/api/v1/health/database` | PostgreSQL bağlantısını kontrol eder. |
+
+#### Çalışma Durumu
+
+🟢 **Tamamlandı.** Backend authentication sistemi frontend ile bağlanmış, kullanıcıya özel belge ve analiz kayıtları PostgreSQL üzerinde çalışır hâle getirilmiştir.
+
+---
+
+### Dosya İşleme ve OCR — Yüksel Karan
+
+Bu görev kapsamında Sprint 2’de geliştirilen OCR altyapısı ana backend sürüm yapısına entegre edilmiş ve dosya yükleme akışı uçtan uca tamamlanmıştır.
+
+#### Tamamlanan Çalışmalar
+
+- OCR endpointi `/api/v1` sürüm yapısına entegre edildi.
+- Endpoint authentication sistemiyle korumalı hâle getirildi.
+- PDF dosyalarının yüklenmesi sağlandı.
+- JPG, JPEG ve PNG dosyalarının yüklenmesi sağlandı.
+- Desteklenen dosya türleri için whitelist kontrolü tamamlandı.
+- Backend tarafında dosya boyutu kontrolü eklendi.
+- Geçersiz dosya türlerinde kontrollü hata response’u hazırlandı.
+- Dosya boyutu sınırını aşan yüklemeler için hata yönetimi eklendi.
+- Yüklenen dosyalar UUID tabanlı benzersiz isimlerle işlendi.
+- Geçici dosyaların işlem sonrasında otomatik silinmesi sağlandı.
+- Metin katmanı bulunan PDF dosyalarından doğrudan metin çıkarıldı.
+- Metin katmanı bulunmayan taranmış PDF sayfalarına OCR uygulandı.
+- Karma PDF dosyaları için sayfa bazlı metin çıkarma yöntemi kullanıldı.
+- Görsel dosyalarda Tesseract OCR işlemi gerçekleştirildi.
+- Türkçe karakter desteği korundu.
+- OCR güven skoru ve gürültü filtreleme işlemleri uygulandı.
+- Çıkarılan metin temizleme fonksiyonundan geçirildi.
+- OCR çıktısı Study Agent servisinin kabul ettiği standart formata dönüştürüldü.
+- OCR sonucu Study Agent servisine iletildi.
+- Belge bilgileri kullanıcı ve analiz kaydıyla ilişkilendirildi.
+- Başarısız OCR durumlarında kullanıcıya anlaşılır hata mesajları döndürüldü.
+- PDF, görsel ve karma belge senaryoları test edildi.
+
+#### Hazırlanan Temel API Endpointleri
+
+| Metot | Endpoint | Açıklama |
+|---|---|---|
+| POST | `/api/v1/ocr/upload` | PDF veya görsel dosyayı yükler, metni çıkarır ve standart formatta döndürür. |
+| POST | `/api/v1/study/summary` | OCR ile kaydedilen belgenin özetini ve önemli noktalarını oluşturur. |
+
+#### Çalışma Durumu
+
+🟢 **Tamamlandı.** Dosya yükleme, dosya türü ve boyutu kontrolü, PDF metin çıkarma, OCR, metin temizleme ve Study Agent’a veri aktarımı uçtan uca çalışır hâle getirilmiştir.
+
+---
+
+### Study Agent ve Özet Servisi — Hüseyin Tutak
+
+Bu görev kapsamında Study Agent’ın OCR ve frontend ile entegrasyonu tamamlanmış; Career Agent, Coach Agent ve Quiz özellikleri sisteme eklenmiştir.
+
+#### Tamamlanan Çalışmalar
+
+- OCR servisinden gelen metnin Study Agent tarafından işlenmesi sağlandı.
+- Uzun metinler chunking yöntemiyle uygun parçalara ayrıldı.
+- Ders materyali özeti oluşturma akışı tamamlandı.
+- Metin içerisindeki önemli noktaların çıkarılması sağlandı.
+- Yapılandırılmış JSON response modeli frontend ile uyumlu hâle getirildi.
+- Boş veya yetersiz metin senaryoları için hata yönetimi eklendi.
+- LLM servis hatalarında kontrollü response döndürülmesi sağlandı.
+- Özet sonuçları PostgreSQL veritabanına kaydedildi.
+- Analiz kayıtlarının kullanıcı ve belgeyle ilişkilendirilmesi tamamlandı.
+- Kullanıcının geçmiş analiz sonuçlarına erişebilmesi sağlandı.
+- Career Agent temel servis yapısı geliştirildi.
+- Kullanıcının yüklediği CV metninin analiz edilmesi sağlandı.
+- CV içerisindeki güçlü yönlerin belirlenmesi sağlandı.
+- CV içerisindeki eksik veya geliştirilmesi gereken alanlar çıkarıldı.
+- Kullanıcıya kariyer gelişimine yönelik öneriler oluşturuldu.
+- Coach Agent temel servis yapısı geliştirildi.
+- Öğrenciye çalışma ve gelişim önerileri oluşturuldu.
+- Quiz üretim özelliği geliştirildi.
+- Ders materyalinden soru ve cevapların oluşturulması sağlandı.
+- Agent servislerinin hata yönetimi ve response modelleri standartlaştırıldı.
+- Frontend ile veri alışverişi test edildi.
+- Uçtan uca demo senaryosu tamamlandı.
+
+#### Çalışma Durumu
+
+🟢 **Tamamlandı.** Study Agent, OCR ve frontend ile entegre edilmiş; Career Agent, CV analizi, Coach Agent ve Quiz özellikleri çalışır duruma getirilmiştir.
+
+---
+
+### Sprint Review
+
+Sprint 3 sonunda gerçekleştirilen Sprint Review toplantısında UniMate AI uygulamasının final MVP sürümü takım üyeleri tarafından değerlendirilmiştir.
+
+Sprint kapsamında tamamlanan çalışmalar:
+
+- Sprint 2’den kalan entegrasyon çalışmaları tamamlandı.
+- Frontend ve backend bağlantısı kuruldu.
+- Geçici authentication sistemi kaldırıldı.
+- Gerçek JWT authentication sistemine geçildi.
+- Register endpointi frontend’e bağlandı.
+- Login endpointi frontend’e bağlandı.
+- Protected Route sistemi gerçek JWT ile çalışır hâle getirildi.
+- Backend hata mesajları frontend üzerinde gösterildi.
+- PDF ve görsel yükleme akışı tamamlandı.
+- Dosya türü ve dosya boyutu kontrolleri tamamlandı.
+- OCR sonucu Study Agent servisine gönderildi.
+- Study Agent tarafından oluşturulan özet frontend üzerinde gösterildi.
+- Özet sonuçları PostgreSQL veritabanına kaydedildi.
+- Kullanıcıya ait geçmiş analiz sonuçları Dashboard üzerinde gösterildi.
+- Career Agent geliştirildi.
+- CV analizi özelliği hazırlandı.
+- Coach Agent geliştirildi.
+- Quiz özelliği geliştirildi.
+- Dashboard üzerinde responsive tasarım iyileştirmeleri yapıldı.
+- Loading, boş veri ve hata durumları tamamlandı.
+- Uçtan uca sistem testleri gerçekleştirildi.
+- Tespit edilen entegrasyon hataları giderildi.
+- README ve sprint dokümantasyonu tamamlandı.
+- Pull Request ve merge süreçleri tamamlandı.
+- Üç dakikalık demo videosu hazırlandı.
+- Final sunumu hazırlandı.
+
+Sprint Review sonucunda UniMate AI uygulamasının temel MVP hedeflerini karşıladığı ve final teslimine hazır olduğu değerlendirilmiştir.
+
+---
+
+### Sprint Retrospective
+
+#### İyi Gidenler
+
+- Takım üyelerinin teknik sorumlulukları net şekilde ayrıldı.
+- Sprint 2’de ayrı geliştirilen modüller başarıyla birleştirildi.
+- Frontend ve backend authentication entegrasyonu tamamlandı.
+- Gerçek JWT kullanıcı akışı sorunsuz şekilde çalıştırıldı.
+- Dosya yükleme, OCR ve özet üretme akışı uçtan uca tamamlandı.
+- PostgreSQL kayıt işlemleri kullanıcıya özel hâle getirildi.
+- Geçmiş analiz sonuçlarının gösterilmesi sağlandı.
+- Takım üyeleri entegrasyon sorunlarında birlikte çalıştı.
+- Feature branch ve Pull Request yaklaşımı korundu.
+- Jira görevleri sprint boyunca güncellendi.
+- MVP’nin temel özelliklerine öncelik verildi.
+- Career Agent, Coach Agent ve Quiz özellikleri ürün kapsamına eklendi.
+- Responsive tasarım ve kullanıcı deneyimi iyileştirildi.
+- Demo senaryosu başarıyla çalıştırıldı.
+- Sprint için planlanan 15 Story Point’in tamamı tamamlandı.
+- Toplam 63 Story Point’lik Product Backlog tamamlandı.
+
+#### Geliştirilmesi Gerekenler
+
+- API sözleşmelerinin projenin daha erken aşamalarında ortaklaştırılması gerekirdi.
+- Frontend ve backend entegrasyonu için sprint başlarında daha fazla ortak test yapılabilirdi.
+- Otomatik test kapsamı daha fazla genişletilebilirdi.
+- Agent cevaplarının doğruluğunu ölçen değerlendirme senaryoları artırılabilirdi.
+- Büyük dosyalarda performans testlerine daha fazla zaman ayrılabilirdi.
+- OCR doğruluğu farklı belge türleriyle daha kapsamlı test edilebilirdi.
+- Kullanıcı deneyimi testleri daha geniş bir kullanıcı grubuyla gerçekleştirilebilirdi.
+- Deployment ve canlı ortam süreçlerine daha erken başlanabilirdi.
+- Teknik dokümantasyon geliştirme süreci boyunca daha düzenli güncellenebilirdi.
+- Flashcard özelliği zaman planlaması nedeniyle daha kapsamlı ele alınabilirdi.
+
+---
+
+### Alınan Kararlar
+
+- UniMate AI uygulamasının final MVP sürümünün tamamlandığı kabul edilmiştir.
+- Temel ürün akışının JWT Authentication, Dashboard, dosya yükleme, OCR, Study Agent, analiz geçmişi, Career Agent, Coach Agent ve Quiz özelliklerinden oluşmasına karar verilmiştir.
+- Geçici authentication sisteminin projeden tamamen kaldırılmasına karar verilmiştir.
+- Kullanıcıya özel tüm endpointlerin JWT ile korunmasına karar verilmiştir.
+- Kullanıcıların yalnızca kendilerine ait belge ve analiz sonuçlarına erişebilmesi kararlaştırılmıştır.
+- Dosya türü ve boyutu kontrollerinin hem frontend hem backend tarafında uygulanmasına karar verilmiştir.
+- Agent response yapılarının frontend ile uyumlu ortak bir formatta tutulmasına karar verilmiştir.
+- Main branch’e doğrudan geliştirme yapılmaması ve feature branch yaklaşımının korunması kararlaştırılmıştır.
+- Tüm geliştirmelerin Pull Request ve kod kontrolü sonrasında merge edilmesine karar verilmiştir.
+- Final tesliminden önce README, Jira ve GitHub durumlarının birlikte kontrol edilmesine karar verilmiştir.
+- Demo videosunda Register → Login → Dashboard → Dosya Yükleme → OCR → Özet → Geçmiş Analiz akışının gösterilmesine karar verilmiştir.
+- Final sunumunda ürün problemi, hedef kitle, çözüm, teknik mimari, agent yapısı ve demo akışının anlatılmasına karar verilmiştir.
+- Sprint 3’ün projenin son sprinti olması nedeniyle yeni bir sprint planlanmamasına karar verilmiştir.
+
+---
+
+### Proje Durumu
+
+- 🟢 **Sprint 1 Tamamlandı — 24 Story Point**
+- 🟢 **Sprint 2 Tamamlandı — 24 Story Point**
+- 🟢 **Sprint 3 Tamamlandı — 15 Story Point**
+- ✅ **Toplam 63 Story Point tamamlandı**
+- ✅ **UniMate AI MVP tamamlandı**
+- ✅ **README ve sprint dokümantasyonu tamamlandı**
+- ✅ **Pull Request ve merge süreçleri tamamlandı**
+- ✅ **Demo videosu hazırlandı**
+- ✅ **Final sunumu hazırlandı**
+- 🚀 **Proje final teslimine hazır**
