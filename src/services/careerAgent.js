@@ -1,18 +1,43 @@
 import { apiRequest } from "./api";
 
 export async function analyzeCV(file) {
-  // buraya CV analizi backend endpoint'i bağlanacak
   const form = new FormData();
   form.append("file", file);
-  return apiRequest("/api/career/analyze", { method: "POST", body: form, isForm: true });
+  const response = await apiRequest("/api/v1/cv/analyze", {
+    method: "POST",
+    body: form,
+    isForm: true,
+  });
+  const result = response.data;
+  return {
+    id: result.id,
+    documentId: result.documentId,
+    score: result.overallScore,
+    summary: result.summary,
+    technical_skills: result.skills || [],
+    strengths: result.strengths || [],
+    missing_areas: result.weaknesses || [],
+    recommendations: result.recommendations || [],
+    experience_level: result.experienceLevel,
+    education: [],
+    experience: [],
+    soft_skills: [],
+  };
 }
 
-export async function matchJobs(analysisId) {
-  // buraya iş ilanı eşleştirme backend endpoint'i bağlanacak
-  return apiRequest(`/api/career/match-jobs?analysis_id=${analysisId}`);
+export async function matchJobs({ analysisId, jobTitle, jobDescription }) {
+  const response = await apiRequest("/api/v1/jobs/match", {
+    method: "POST",
+    body: {
+      cvAnalysisId: analysisId,
+      jobTitle,
+      jobDescription,
+    },
+  });
+  return response.data;
 }
 
 export async function getCVHistory() {
-  // buraya analiz geçmişi backend endpoint'i bağlanacak
-  return apiRequest("/api/career/history");
+  const response = await apiRequest("/api/v1/users/me/analysis-history");
+  return response.data;
 }

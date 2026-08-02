@@ -2,6 +2,7 @@ import os
 
 os.environ["DATABASE_URL"] = "sqlite+pysqlite:///./test_unimate.db"
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-that-is-long-enough-for-tests"
+os.environ["LLM_PROVIDER"] = "local"
 
 import pytest
 from fastapi.testclient import TestClient

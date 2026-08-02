@@ -4,6 +4,7 @@ import CoachCard from "./CoachCard";
 import NavIcon, { GradCap } from "./NavIcons";
 import { LoadingState, ErrorState, EmptyState } from "./components/StateComponents";
 import { getCoachRecommendation } from "./services/coachAgent";
+import { getCVHistory } from "./services/careerAgent";
 import { summarizeStudyMaterial } from "./services/studyAgent";
 import { validateFile } from "./services/api";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -30,6 +31,7 @@ export default function DashboardApp({ currentUser, onLogout }) {
   const [careerSonucu, setCareerSonucu] = useState(null);
   const [quizSonucu, setQuizSonucu] = useState(null);
   const [sonDosyalar, setSonDosyalar] = useState([]);
+  const [studyAnalizSayisi, setStudyAnalizSayisi] = useState(0);
 
   const [coachOnerisi, setCoachOnerisi] = useState(null);
   const [coachYukleniyor, setCoachYukleniyor] = useState(false);
@@ -67,6 +69,72 @@ export default function DashboardApp({ currentUser, onLogout }) {
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    getCVHistory()
+      .then((items) => {
+        if (!active || !Array.isArray(items)) return;
+
+        const studyItems = items.filter((item) => item.type === "study_summary");
+        const latestStudy = items.find((item) => item.type === "study_summary");
+        const latestCV = items.find((item) => item.type === "cv_analysis");
+        const latestQuiz = items.find((item) => item.type === "quiz_result");
+
+        setStudyAnalizSayisi(studyItems.length);
+
+        if (latestStudy) {
+          const points = latestStudy.metadata?.keyPoints?.points || [];
+          const filename = latestStudy.metadata?.filename || latestStudy.title;
+
+          setStudyOzeti({
+            documentId: latestStudy.metadata?.documentId,
+            baslik: filename,
+            dosya: filename,
+            tarih: new Date(latestStudy.createdAt).toLocaleDateString("tr-TR"),
+            anaTemalar: latestStudy.summary,
+            summary: latestStudy.summary,
+            onemliNoktalar: points.map((point) => point.description || point.title),
+          });
+        }
+
+        if (latestCV) {
+          setCareerSonucu({
+            score: latestCV.metadata?.score,
+            technical_skills: latestCV.metadata?.skills || [],
+            dosya: latestCV.metadata?.filename || "CV dosyası",
+            tarih: new Date(latestCV.createdAt).toLocaleDateString("tr-TR"),
+          });
+        }
+
+        if (latestQuiz) {
+          setQuizSonucu({
+            score: latestQuiz.metadata?.score ?? null,
+            level: latestQuiz.metadata?.level,
+            totalQuestions: latestQuiz.metadata?.totalQuestions,
+          });
+        }
+
+        const recentFiles = items
+          .filter((item) => item.type === "study_summary" || item.type === "cv_analysis")
+          .slice(0, 5)
+          .map((item) => ({
+            ad: item.metadata?.filename || item.title,
+            tip: item.type === "study_summary" ? "ders" : "cv",
+            tarih: new Date(item.createdAt).toLocaleDateString("tr-TR"),
+          }));
+
+        setSonDosyalar(recentFiles);
+      })
+      .catch(() => {
+        // Geçmiş yüklenemese bile diğer özellikler çalışmaya devam eder.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const dosyaSeciciyiAc = () => dosyaGirdisiRef.current.click();
 
   const dosyaSecildi = async (event) => {
@@ -86,6 +154,7 @@ export default function DashboardApp({ currentUser, onLogout }) {
       const ozet = await summarizeStudyMaterial(dosya);
       setStudyOzeti({ ...ozet, dosya: dosya.name, tarih: new Date().toLocaleDateString("tr-TR") });
       setDosyaYuklendi(true);
+      setStudyAnalizSayisi((previousCount) => previousCount + 1);
       dosyaEkle(dosya.name, "ders");
     } catch (error) {
       setHataMesaji(error.message);
@@ -98,6 +167,10 @@ export default function DashboardApp({ currentUser, onLogout }) {
     setCareerSonucu(sonuc);
     dosyaEkle(sonuc.dosya, "cv");
     coachGetir();
+  };
+
+  const quizTamamlandi = (sonuc) => {
+    setQuizSonucu(sonuc);
   };
 
   const NAV = [
@@ -196,7 +269,7 @@ export default function DashboardApp({ currentUser, onLogout }) {
 
               <div className="stat-grid">
                 <div className="stat-card">
-                  <div className="stat-value">{studyOzeti ? "1" : "0"}</div>
+                  <div className="stat-value">{studyAnalizSayisi}</div>
                   <div className="stat-label">Analiz Edilen Ders</div>
                 </div>
                 <div className="stat-card">
@@ -204,7 +277,9 @@ export default function DashboardApp({ currentUser, onLogout }) {
                   <div className="stat-label">CV Puanı</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">{quizSonucu ? `%${quizSonucu.score}` : "—"}</div>
+                  <div className="stat-value">
+                    {quizSonucu?.score != null ? `%${quizSonucu.score}` : "—"}
+                  </div>
                   <div className="stat-label">Son Quiz Başarısı</div>
                 </div>
               </div>
@@ -334,7 +409,11 @@ export default function DashboardApp({ currentUser, onLogout }) {
           )}
 
           {aktifSayfa === "quiz" && (
-            <QuizAgent studyResult={studyOzeti} konular={quizKonulari} onQuizComplete={setQuizSonucu} />
+            <QuizAgent
+              studyResult={studyOzeti}
+              konular={quizKonulari}
+              onQuizComplete={quizTamamlandi}
+            />
           )}
 
           {aktifSayfa === "career-agent" && <CareerAgent onAnalysisComplete={careerTamamlandi} />}
